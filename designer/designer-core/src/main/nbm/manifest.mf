@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Install: org/ai/datalab/designer/startup/Installer.class
+OpenIDE-Module-Layer: org/ai/datalab/designer/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/ai/datalab/designer/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+

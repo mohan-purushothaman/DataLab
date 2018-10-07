@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ai.datalab.designer</groupId>
+        <artifactId>adapter-visual</artifactId>
+        <version>1.0-alpha-1</version>
+    </parent>
+    <groupId>org.ai.datalab.designer</groupId>
+    <artifactId>jdbc</artifactId>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
+            <version>RELEASE82</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ai.datalab.designer</groupId>
+            <artifactId>designer-visual-core</artifactId>
+            <version>1.0-alpha-1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.14.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-db</artifactId>
+            <version>RELEASE82</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ai.datalab.adapter</groupId>
+            <artifactId>jdbc-adx</artifactId>
+            <version>1.0-alpha-1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+    <name>jdbc</name>
+</project>
