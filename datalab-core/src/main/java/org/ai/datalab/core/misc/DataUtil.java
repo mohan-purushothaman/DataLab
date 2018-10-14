@@ -3,21 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.visual;
+package org.ai.datalab.core.misc;
 
-import java.lang.reflect.InvocationTargetException;
-import org.openide.nodes.PropertySupport;
-import org.openide.nodes.Sheet;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.ValueConverter;
+import org.apache.commons.lang.text.StrLookup;
+import org.apache.commons.lang.text.StrSubstitutor;
 
 /**
  *
  * @author Mohan Purushothaman
  */
 public class DataUtil {
+
     public static String normalizeFieldKey(String suggestedDesc, Data availableData) {
         if (suggestedDesc.length() > 32) {
-            suggestedDesc=suggestedDesc.substring(0, 32);
+            suggestedDesc = suggestedDesc.substring(0, 32);
         }
         StringBuilder sb = new StringBuilder();
         for (char c : suggestedDesc.toCharArray()) {
@@ -47,31 +48,33 @@ public class DataUtil {
         }
         return s + Math.round(Math.random());
     }
-    
-    
-    public static Sheet.Set getDataSheet(final Data data, String displayName, String tabName) {
-        if (data != null) {
-            Sheet.Set set = Sheet.createPropertiesSet();
 
-            for (final String d : data.getKeyNames()) {
-                set.put(new PropertySupport.ReadOnly<String>(d, String.class, d, d) {
+   
 
-                    @Override
-                    public String getValue() throws IllegalAccessException, InvocationTargetException {
-                        return String.valueOf(data.getValue(d));
-                    }
-                });
-            }
-            set.setName(displayName);
-            set.setDisplayName(displayName);
-            set.setValue("tabName", tabName);
-            return set;
-        }
-        return null;
+    public static String getVariableString(String varName) {
+        return "${" + varName + "}";
     }
     
-    
-    public static String getVariableString(String varName){
-        return "${"+varName+"}";
+    public static String substituteData(String s, Data data) throws Exception{
+        return substituteData(s, data,ValueConverter.SIMPLE_STRING_CONVERTER);
+    }
+
+    public static String substituteData(String s, Data data, ValueConverter<Object, String> converter) throws Exception{
+        if (data == null) {
+            return s;
+        }
+   
+        StrSubstitutor sup = new StrSubstitutor(new StrLookup() {
+            @Override
+            public String lookup(String key) {
+                try {
+                    return converter.convert(data.getValue(key));
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+}
+            }
+        });
+
+        return sup.replace(s);
     }
 }

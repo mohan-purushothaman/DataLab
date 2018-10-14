@@ -23,7 +23,7 @@ import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.visual.DataLabTheme;
-import org.ai.datalab.visual.DataUtil;
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.visual.impl.FlowEdge;
 
 /**

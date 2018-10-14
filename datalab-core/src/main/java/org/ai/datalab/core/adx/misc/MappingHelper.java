@@ -23,8 +23,8 @@ public class MappingHelper<ID> {
 
     private final List<SingleMapping<ID>> idList = new LinkedList<>();
 
-    public final void addIdMap(ID adapterID, String fieldKey, ValueConverter converter, ValueGroupingStrategy strategy, Object sampleValue) {
-        addIdMap(new SingleMapping<>(adapterID, fieldKey, converter, strategy, sampleValue, this));
+    public final void addIdMap(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue) {
+        addIdMap(new SingleMapping<>(adapterID, fieldKey, converter, sampleValue, this));
     }
 
     public final void addIdMap(SingleMapping<ID> idMapping) {

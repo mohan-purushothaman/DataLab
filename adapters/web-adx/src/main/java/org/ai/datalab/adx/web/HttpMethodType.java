@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.core.adx.misc;
+package org.ai.datalab.adx.web;
 
 /**
  *
  * @author Mohan Purushothaman
- * @param <ID>
  */
-public interface ValueMapper<ID> {
-    public Object getValue(ID id) throws Exception;
+public enum HttpMethodType {
+    GET,
+    POST;
 }

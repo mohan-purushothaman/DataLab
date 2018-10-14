@@ -16,22 +16,21 @@ import org.openide.util.Exceptions;
 import org.ai.datalab.adx.db.DB_Adapter;
 import org.ai.datalab.adx.db.DB_Processor;
 import org.ai.datalab.adx.db.PreparedQuery;
+import org.ai.datalab.adx.db.visual.DbExecutionUnit;
 import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.executor.ExecutorType;
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.designer.VariableHighlighterListener;
 import org.ai.datalab.designer.editor.SimpleEditor;
-import org.ai.datalab.adx.db.visual.DbExecutionUnit;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.util.ResourceVisualUtil;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
-import org.ai.datalab.visual.DataUtil;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
@@ -217,12 +216,12 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
 
                                 Type detectedType = TypeUtil.detectType(val);
 
-                                mapping.addIdMap(columnName, name, detectedType.getConverter(), ValueGroupingStrategy.SINGLE, val);
+                                mapping.addIdMap(columnName, name, detectedType.getConverter(),  val);
                             }
 
                         } else {
                             String name = DataUtil.normalizeFieldKey("UPDATE_COUNT", sampleInput);
-                            mapping.addIdMap("NOT_USED", name, Type.Long.getConverter(), null, p.getUpdateCount());
+                            mapping.addIdMap("NOT_USED", name, Type.Long.getConverter(), p.getUpdateCount());
                         }
 
                     }

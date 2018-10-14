@@ -21,8 +21,8 @@ import org.ai.datalab.adapter.excel.adx.ExcelWriter;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.ValueConverter;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.executor.ExecutorType;
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 import org.ai.datalab.core.resource.Resource;
@@ -32,7 +32,6 @@ import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.util.ResourceVisualUtil;
 import org.ai.datalab.designer.visual.resource.ResourceCreator;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
-import org.ai.datalab.visual.DataUtil;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
@@ -318,7 +317,7 @@ public class ExcelConnectorPanel extends VisualNodeValidator {
             Type type=TypeUtil.detectType(value);
             
             
-            mapping.addIdMap(i,id, type.getConverter(), ValueGroupingStrategy.SINGLE,value);
+            mapping.addIdMap(i,id, type.getConverter(),value);
         }
 
         return mapping;

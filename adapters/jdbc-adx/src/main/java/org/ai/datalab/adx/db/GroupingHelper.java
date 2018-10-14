@@ -16,7 +16,7 @@ import org.ai.datalab.core.adx.misc.ValueMapper;
  * @author Mohan Purushothaman
  * @param <ID>
  */
-public class GroupingHelper<ID> implements ValueMapper<ID>{
+public class GroupingHelper<ID> implements ValueMapper<ID> {
 
     private final Map<ID, List<Object>> values = new HashMap<>();
 
@@ -28,14 +28,14 @@ public class GroupingHelper<ID> implements ValueMapper<ID>{
         }
         list.add(value);
     }
-    
+
     @Override
-    public Object[] getValue(ID id){
+    public Object getValue(ID id) {
         List<Object> list = values.get(id);
-        if(list==null){
-            return new Object[0];
+        if (list == null || list.isEmpty()) {
+            return null;
         }
-        return list.toArray();
+        return list.get(0);
     }
 
 }

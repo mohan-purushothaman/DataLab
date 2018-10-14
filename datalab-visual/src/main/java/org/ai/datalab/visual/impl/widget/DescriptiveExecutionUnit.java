@@ -25,7 +25,8 @@ import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Property;
 import org.ai.datalab.core.misc.SimpleData;
-import org.ai.datalab.visual.DataUtil;
+import org.ai.datalab.core.misc.DataUtil;
+import org.ai.datalab.visual.DataLabVisualUtil;
 
 /**
  *
@@ -183,11 +184,11 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
             set.setValue("tabName", tabName);
             set.setPreferred(true);
             props.add(set);
-            Sheet.Set inputSet = DataUtil.getDataSheet(getInputFields(), "Input Available", tabName);
+            Sheet.Set inputSet = DataLabVisualUtil.getDataSheet(getInputFields(), "Input Available", tabName);
             props.add(inputSet);
             if (generateData(getProvidingType())) {
                 try {
-                    props.add(DataUtil.getDataSheet(getGeneratedOutputData(), "Output Generated", tabName));
+                    props.add(DataLabVisualUtil.getDataSheet(getGeneratedOutputData(), "Output Generated", tabName));
                 } catch (Exception ex) {
                     Exceptions.printStackTrace(ex);
                 }

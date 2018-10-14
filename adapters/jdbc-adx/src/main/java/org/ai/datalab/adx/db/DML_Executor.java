@@ -59,8 +59,8 @@ class SimpleUpdateMapper implements ValueMapper {
     }
 
     @Override
-    public Object[] getValue(Object id) throws Exception {
-        return new Object[]{updateCount[index++]};
+    public Object getValue(Object id) throws Exception {
+        return updateCount[index++];
     }
 
 }

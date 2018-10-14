@@ -5,15 +5,19 @@
  */
 package org.ai.datalab.visual;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import javax.swing.JComponent;
+import org.ai.datalab.core.Data;
 import org.netbeans.api.visual.widget.Scene;
 import org.openide.util.Exceptions;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.visual.impl.DataLabListenerGraph;
 import org.ai.datalab.visual.impl.RunFrame;
 import org.ai.datalab.visual.impl.theme.FlowChartTheme;
+import org.openide.nodes.PropertySupport;
+import org.openide.nodes.Sheet;
 
 /**
  *
@@ -63,6 +67,28 @@ public class DataLabVisualUtil {
         } catch (Exception e) {
             Exceptions.printStackTrace(Exceptions.attachSeverity(e, Level.INFO));
         }
+    }
+    
+    
+     public static Sheet.Set getDataSheet(final Data data, String displayName, String tabName) {
+        if (data != null) {
+            Sheet.Set set = Sheet.createPropertiesSet();
+
+            for (final String d : data.getKeyNames()) {
+                set.put(new PropertySupport.ReadOnly<String>(d, String.class, d, d) {
+
+                    @Override
+                    public String getValue() throws IllegalAccessException, InvocationTargetException {
+                        return String.valueOf(data.getValue(d));
+                    }
+                });
+            }
+            set.setName(displayName);
+            set.setDisplayName(displayName);
+            set.setValue("tabName", tabName);
+            return set;
+        }
+        return null;
     }
 
 }

@@ -26,8 +26,8 @@ import org.ai.datalab.adx.file.FileAdapter;
 import org.ai.datalab.adx.file.FilePatternParser;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.executor.ExecutorType;
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 import org.ai.datalab.core.resource.Resource;
@@ -38,7 +38,6 @@ import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.util.ResourceVisualUtil;
 import org.ai.datalab.designer.visual.resource.ResourceCreator;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
-import org.ai.datalab.visual.DataUtil;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
@@ -418,7 +417,7 @@ public class FileConnectorPanel extends VisualNodeValidator {
                 Object value = data.getValue(key);
                 Type type = TypeUtil.detectType(value);
 
-                helper.addIdMap(key, key, type.getConverter(), ValueGroupingStrategy.SINGLE, value);
+                helper.addIdMap(key, key, type.getConverter(), value);
                 return "";
             }
         });

@@ -13,7 +13,8 @@ import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.ai.datalab.core.Data;
-import org.ai.datalab.visual.DataUtil;
+import org.ai.datalab.core.misc.DataUtil;
+import org.ai.datalab.visual.DataLabVisualUtil;
 
 /**
  *
@@ -65,7 +66,7 @@ public class FlowEdge {
                 Sheet.Set set = Sheet.createPropertiesSet();
 
                 Data data = FlowEdge.this.getData();
-                Sheet.Set fieldSheet = DataUtil.getDataSheet(data, "Fields Available", "Properties");
+                Sheet.Set fieldSheet = DataLabVisualUtil.getDataSheet(data, "Fields Available", "Properties");
                 if (FlowEdge.this.getFlowCondition() != null) {
                     set.put(new PropertySupport.ReadOnly<Boolean>("Execute if Condition is True", Boolean.class, "Execute if Condition is True", "if ticked it would be true flow, If now it would be false flow") {
 

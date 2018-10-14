@@ -5,8 +5,8 @@
  */
 package org.ai.datalab.designer.visual.resource;
 
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.SimpleData;
-import org.ai.datalab.visual.DataUtil;
 
 /**
  *

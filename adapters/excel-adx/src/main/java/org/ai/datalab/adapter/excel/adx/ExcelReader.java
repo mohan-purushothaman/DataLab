@@ -17,7 +17,6 @@ import org.ai.datalab.core.ExecutionConfig;
 import org.ai.datalab.core.Executor;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.ValueConverter;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.adx.misc.ValueMapper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Reader;
@@ -61,8 +60,8 @@ public class ExcelReader extends ExcelProvider {
                     //TODO implement streaming read
                     mapping.map(new ValueMapper<Integer>() {
                         @Override
-                        public Object[] getValue(Integer id) throws Exception {
-                            return new Object[]{ExcelUtil.readValue(row.getCell(id))};
+                        public Object getValue(Integer id) throws Exception {
+                            return ExcelUtil.readValue(row.getCell(id));
                         }
                     }, data);
 
@@ -86,7 +85,7 @@ public class ExcelReader extends ExcelProvider {
                         mapping = new MappingHelper<>();
                         for (Cell c : row) {
                             String columnName = c.getStringCellValue();
-                            mapping.addIdMap(c.getColumnIndex(), columnName, ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "");
+                            mapping.addIdMap(c.getColumnIndex(), columnName, ValueConverter.SIMPLE_STRING_CONVERTER,  "");
                         }
                     }
 

@@ -13,5 +13,6 @@
         <module>file-adx</module>
         <module>excel-adx</module>
         <module>java-adx</module>
+        <module>web-adx</module>
     </modules>
 </project>

@@ -56,8 +56,8 @@ public class DB_Reader extends DB_Provider{
 
                     mapping.map(new ValueMapper<String>() {
                         @Override
-                        public Object[] getValue(String id) throws Exception {
-                            return new Object[]{set.getObject(id)};
+                        public Object getValue(String id) throws Exception {
+                            return set.getObject(id);
                         }
                     }, data);
 
@@ -83,7 +83,7 @@ public class DB_Reader extends DB_Provider{
                     int len = meta.getColumnCount();
                     for (int i = 0; i < len; i++) {
                         String columnName=meta.getColumnName(i + 1);
-                        mapping.addIdMap(columnName,columnName, null,null,null);
+                        mapping.addIdMap(columnName,columnName, null,null);
                     }
                 }
             }

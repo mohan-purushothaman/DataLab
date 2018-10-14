@@ -5,7 +5,6 @@
  */
 package org.ai.datalab.core;
 
-import org.ai.datalab.core.ExecutorProvider;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 
 /**

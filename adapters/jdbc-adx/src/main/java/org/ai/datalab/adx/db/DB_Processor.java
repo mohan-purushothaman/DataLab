@@ -65,8 +65,8 @@ public class DB_Processor extends DB_Provider {
                                 if (set.next()) {
                                     mapping.map(new ValueMapper<String>() {
                                         @Override
-                                        public Object[] getValue(String id) throws Exception {
-                                            return new Object[]{set.getObject(id)};
+                                        public Object getValue(String id) throws Exception {
+                                            return set.getObject(id);
                                         }
                                     }, data);
 
@@ -74,8 +74,8 @@ public class DB_Processor extends DB_Provider {
                             } else {
                                 mapping.map(new ValueMapper<String>() {
                                     @Override
-                                    public Object[] getValue(String id) throws Exception {
-                                        return new Integer[]{p.getUpdateCount()};
+                                    public Object getValue(String id) throws Exception {
+                                        return p.getUpdateCount();
                                     }
                                 }, data);
 

@@ -23,7 +23,6 @@ import org.ai.datalab.adapter.excel.adx.ExcelWriter;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.ValueConverter;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourceFactory;
 import org.ai.datalab.visual.DataLabVisualUtil;
@@ -50,17 +49,17 @@ public class ExcelTest {
         String sheetName = "emp_data";
 
         MappingHelper map = new MappingHelper();
-        map.addIdMap(0, "EMPLOYEE_ID", ValueConverter.LONG_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(1, "FIRST_NAME", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(2, "LNAME", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(3, "EMAIL", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(4, "PHONE_NUMBER", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(5, "H_DATE", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(6, "JOB_ID", ValueConverter.SIMPLE_STRING_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(7, "SALARY", ValueConverter.LONG_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(8, "COMMISSION_PCT", ValueConverter.NO_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(9, "MANAGER_ID", ValueConverter.LONG_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
-        map.addIdMap(10, "DEPARTMENT_ID", ValueConverter.LONG_CONVERTER, ValueGroupingStrategy.SINGLE, "?");
+        map.addIdMap(0, "EMPLOYEE_ID", ValueConverter.LONG_CONVERTER,  "?");
+        map.addIdMap(1, "FIRST_NAME", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(2, "LNAME", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(3, "EMAIL", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(4, "PHONE_NUMBER", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(5, "H_DATE", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(6, "JOB_ID", ValueConverter.SIMPLE_STRING_CONVERTER,  "?");
+        map.addIdMap(7, "SALARY", ValueConverter.LONG_CONVERTER,  "?");
+        map.addIdMap(8, "COMMISSION_PCT", ValueConverter.NO_CONVERTER,  "?");
+        map.addIdMap(9, "MANAGER_ID", ValueConverter.LONG_CONVERTER,  "?");
+        map.addIdMap(10, "DEPARTMENT_ID", ValueConverter.LONG_CONVERTER,  "?");
 
         job.setReader("Reader", new ExcelReader(map, pool, sheetName, true))
                 .addExecutor("testWrite", new ExcelWriter(outpool, sheetName, true));

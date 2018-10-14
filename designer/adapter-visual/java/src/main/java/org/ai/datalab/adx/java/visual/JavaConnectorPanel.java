@@ -15,10 +15,8 @@ import javax.swing.text.JTextComponent;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.editor.AnnotationType;
 import org.netbeans.modules.editor.NbEditorDocument;
-import org.netbeans.spi.editor.hints.HintsController;
 import org.openide.filesystems.FileChooserBuilder;
 import org.openide.text.Annotation;
-import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
@@ -28,7 +26,6 @@ import org.ai.datalab.core.Data;
 import org.ai.datalab.core.Executor;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.SingleMapping;
-import org.ai.datalab.core.adx.misc.ValueGroupingStrategy;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Processor;
 import org.ai.datalab.core.executor.Reader;
@@ -215,7 +212,7 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         for (Map.Entry<String, Object> entry : data.getEntrySet()) {
             Object val = entry.getValue();
             Type type = TypeUtil.detectType(val);
-            SingleMapping s = new DescriptiveSingleMapping(false, entry.getKey(), entry.getKey(), type.getConverter(), ValueGroupingStrategy.FIRST_OCCURENCE, val, helper);
+            SingleMapping s = new DescriptiveSingleMapping(false, entry.getKey(), entry.getKey(), type.getConverter(), val, helper);
             helper.addIdMap(s);
         }
         return helper;

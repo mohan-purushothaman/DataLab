@@ -17,16 +17,14 @@ public class SingleMapping<ID> {
     private final ID adapterID;
     private String fieldKey;
     private ValueConverter converter;
-    private final ValueGroupingStrategy groupingStrategy;
     private Object sampleValue;
     
     private final MappingHelper parent;
 
-    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, ValueGroupingStrategy groupingStrategy,Object sampleValue,MappingHelper parent) {
+    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue,MappingHelper parent) {
         this.adapterID = adapterID;
         this.fieldKey = fieldKey; //TODO when adding field key it should be normalized
         this.converter = converter == null ? ValueConverter.NO_CONVERTER : converter;
-        this.groupingStrategy = groupingStrategy == null ? ValueGroupingStrategy.SINGLE : groupingStrategy;
         this.sampleValue=sampleValue;
         this.parent=parent;
     }
@@ -59,9 +57,7 @@ public class SingleMapping<ID> {
         this.converter = converter;
     }
 
-    public ValueGroupingStrategy getGroupingStrategy() {
-        return groupingStrategy;
-    }
+  
 
     public MappingHelper getParent() {
         return parent;
@@ -75,7 +71,7 @@ public class SingleMapping<ID> {
         if (val == ValueConverter.VALUE_DELETER) {
             data.deleteKey(fieldKey);
         } else {
-            data.setValue(fieldKey, converter, groupingStrategy.group(val.getValue(adapterID)));
+            data.setValue(fieldKey, converter, val.getValue(adapterID));
         }
     }
 
