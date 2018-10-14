@@ -156,6 +156,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
+        resourcePools.setModel((ComboBoxModel<ResourcePool<Connection>>)ResourceVisualUtil.getResourceComboBox(Connection.class,null));
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

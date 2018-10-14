@@ -15,6 +15,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.ai.datalab.core.resource.ResourceFactory;
 import org.ai.datalab.core.resource.ResourcePool;
+import org.ai.datalab.core.resource.ResourcePoolQualifier;
 
 /**
  *
@@ -89,6 +90,11 @@ public class ResourceStore {
     public static Collection<ResourcePool> getResourceList() {
         return ResourceFactory.getResourceList();
     }
+    
+    public static <V> Collection<ResourcePool> findResourcePools(Class<V> expectedResourceClazz, ResourcePoolQualifier<V> qualifier) {
+        return ResourceFactory.findResourcePools(expectedResourceClazz, qualifier);
+    }
+    
 
     public static void refresh() {
         try {

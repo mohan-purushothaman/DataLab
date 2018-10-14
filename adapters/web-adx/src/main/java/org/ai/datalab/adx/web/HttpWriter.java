@@ -11,34 +11,32 @@ import org.ai.datalab.core.ExecutionConfig;
 import org.ai.datalab.core.Executor;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
-import org.ai.datalab.core.executor.impl.SimpleUpdateProcessor;
+import org.ai.datalab.core.executor.impl.SimpleWriter;
 import org.ai.datalab.core.resource.Resource;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public class HttpProcessor extends WebProvider {
+public class HttpWriter extends WebProvider {
 
-    public HttpProcessor(Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, MappingHelper mapping, String resourceId) {
+    public HttpWriter(Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, MappingHelper mapping, String resourceId) {
         super(header, params, requestType, requestBody, mapping, resourceId);
     }
 
     @Override
     public ExecutorType getProvidingType() {
-        return ExecutorType.PROCESSOR;
+        return ExecutorType.WRITER;
     }
 
     @Override
     public Executor getNewExecutor() {
-        return new SimpleUpdateProcessor() {
-            MappingHelper mapping = getMapping();
-
+        return new SimpleWriter() {
             @Override
-            public void updateData(Data data, ExecutionConfig config) throws Exception {
+            public void writeData(Data data, ExecutionConfig config) throws Exception {
                 WebResourcePool pool = (WebResourcePool) config.getResourcePool();
                 try (Resource<WebUrl> resource = pool.getResource()) {
-                    WebUtil.getWebResponse(resource.get().getUrl(), getHeader(), getParams(), getRequestType(), getRequestBody(), data, mapping);
+                    WebUtil.getWebResponse(resource.get().getUrl(), getHeader(), getParams(), getRequestType(), getRequestBody(), data, null);
                 }
             }
         };

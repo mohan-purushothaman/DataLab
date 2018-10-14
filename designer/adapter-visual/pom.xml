@@ -15,5 +15,6 @@
         <module>file</module>
         <module>excel</module>
         <module>java</module>
+        <module>web</module>
     </modules>
 </project>

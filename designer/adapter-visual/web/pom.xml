@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ai.datalab.designer</groupId>
+        <artifactId>adapter-visual</artifactId>
+        <version>1.0-alpha-1</version>
+    </parent>
+    <artifactId>web</artifactId>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.ai.datalab</groupId>
+            <artifactId>web-adx</artifactId>
+            <version>1.0-alpha-1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ai.datalab.designer</groupId>
+            <artifactId>designer-visual-core</artifactId>
+            <version>1.0-alpha-1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+</project>

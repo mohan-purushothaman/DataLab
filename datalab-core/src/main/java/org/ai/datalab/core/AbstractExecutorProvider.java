@@ -13,7 +13,7 @@ import org.ai.datalab.core.adx.misc.MappingHelper;
  */
 public abstract class AbstractExecutorProvider implements ExecutorProvider {
 
-    public MappingHelper mapping;
+    private MappingHelper mapping;
     
     private final String resourceId;
 

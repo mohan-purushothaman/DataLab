@@ -5,7 +5,6 @@
  */
 package org.ai.datalab.core.resource;
 
-import java.lang.reflect.TypeVariable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;

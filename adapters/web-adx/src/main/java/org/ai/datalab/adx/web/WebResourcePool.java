@@ -11,11 +11,11 @@ import org.ai.datalab.core.resource.AbstractResourcePool;
  *
  * @author Mohan Purushothaman
  */
-public class WebResourcePool extends AbstractResourcePool<String>{
+public class WebResourcePool extends AbstractResourcePool<WebUrl>{
 
     private final String url;
     
-    public WebResourcePool(String url, int maxCount, Class<String> resourceClass) throws Exception {
+    public WebResourcePool(String url, int maxCount, Class<WebUrl> resourceClass) throws Exception {
         super(url, maxCount, resourceClass);
         this.url=url;
     }
@@ -25,12 +25,12 @@ public class WebResourcePool extends AbstractResourcePool<String>{
     
     
     @Override
-    protected String createResource() throws Exception {
-         return url;
+    protected WebUrl createResource() throws Exception {
+         return new WebUrl(url);
     }
 
     @Override
-    protected void releaseResource(String resource) throws Exception {
+    protected void releaseResource(WebUrl resource) throws Exception {
          
     }
     
