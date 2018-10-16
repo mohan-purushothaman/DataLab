@@ -5,9 +5,9 @@
  */
 package org.ai.datalab.adx.web.visual;
 
+import java.net.URL;
 import javax.swing.JComponent;
 import org.ai.datalab.adx.web.WebResourcePool;
-import org.ai.datalab.adx.web.WebUrl;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.designer.visual.resource.ResourceCreator;
 import org.openide.DialogDescriptor;
@@ -36,7 +36,7 @@ public class HttpResourceCreator extends ResourceCreator {
             Object result = DialogDisplayer.getDefault().notify(dd);
             if (result == NotifyDescriptor.OK_OPTION) {
 
-                return new WebResourcePool(panel.getUrl(), panel.getMaxAllowed(), WebUrl.class);
+                return new WebResourcePool(panel.getUrl(), panel.getMaxAllowed(), URL.class);
             }
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);

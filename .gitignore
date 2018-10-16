@@ -1,3 +1,17 @@
 /adapters/web-adx/target/
 /adapters/web-adx/nbproject/
 /designer/adapter-visual/web/target/
+/datalab-core/target/
+/datalab-visual/target/
+/adapters/jdbc-adx/target/
+/designer/application/target/
+/adapters/file-adx/target/
+/adapters/excel-adx/target/
+/adapters/java-adx/target/
+/designer/branding/target/
+/designer/designer-visual-core/target/
+/designer/adapter-visual/jdbc/target/
+/designer/adapter-visual/file/target/
+/designer/adapter-visual/excel/target/
+/designer/adapter-visual/java/target/
+/designer/designer-core/target/

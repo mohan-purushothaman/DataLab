@@ -9,6 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.Future;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.ExecutorProvider;
@@ -49,8 +50,8 @@ public class WebTest {
     @Test
     public void simpleTest() throws Exception {
 
-        WebResourcePool pool1 = new WebResourcePool("http://localhost:" + port + "/process", 3, WebUrl.class);
-        WebResourcePool pool2 = new WebResourcePool("http://localhost:" + port + "/write", 3, WebUrl.class);
+        WebResourcePool pool1 = new WebResourcePool("http://localhost:" + port + "/process", 3, URL.class);
+        WebResourcePool pool2 = new WebResourcePool("http://localhost:" + port + "/write", 3, URL.class);
         ResourceFactory.addResourcePool(pool1);
         ResourceFactory.addResourcePool(pool2);
         MappingHelper mapping=new MappingHelper();
@@ -59,7 +60,7 @@ public class WebTest {
         DataJob job = DataJob.getJob("testJob", null);
         job.setReader("dummy numbers", ExecutorProvider.getReaderInstance(SimpleNumberReader.class))
                 .addExecutor("process through http", new HttpProcessor(null, null, HttpMethodType.POST, "${value1}", mapping, pool1.getResourceId())).setThreadCount(12)
-                .addExecutor("write to http", new HttpWriter(null, null, HttpMethodType.POST, "${value1},${value2}", null, pool2.getResourceId())).setThreadCount(12);
+                .addExecutor("write to http", new HttpWriter(null, null, HttpMethodType.POST, "${value1},${value2}",  pool2.getResourceId())).setThreadCount(12);
         
         Future<?> f = DataLabVisualUtil.startVisualize(job);
         //Thread.sleep(10000);

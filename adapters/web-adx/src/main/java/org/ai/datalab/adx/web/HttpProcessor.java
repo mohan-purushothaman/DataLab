@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.adx.web;
 
+import java.net.URL;
 import java.util.Map;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.ExecutionConfig;
@@ -37,8 +38,8 @@ public class HttpProcessor extends WebProvider {
             @Override
             public void updateData(Data data, ExecutionConfig config) throws Exception {
                 WebResourcePool pool = (WebResourcePool) config.getResourcePool();
-                try (Resource<WebUrl> resource = pool.getResource()) {
-                    WebUtil.getWebResponse(resource.get().getUrl(), getHeader(), getParams(), getRequestType(), getRequestBody(), data, mapping);
+                try (Resource<URL> resource = pool.getResource()) {
+                    WebUtil.getWebResponse(resource.get().toExternalForm(), getHeader(), getParams(), getRequestType(), getRequestBody(), data,data, mapping);
                 }
             }
         };

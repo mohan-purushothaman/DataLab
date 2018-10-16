@@ -5,17 +5,18 @@
  */
 package org.ai.datalab.adx.web;
 
+import java.net.URL;
 import org.ai.datalab.core.resource.AbstractResourcePool;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public class WebResourcePool extends AbstractResourcePool<WebUrl>{
+public class WebResourcePool extends AbstractResourcePool<URL>{
 
     private final String url;
     
-    public WebResourcePool(String url, int maxCount, Class<WebUrl> resourceClass) throws Exception {
+    public WebResourcePool(String url, int maxCount, Class<URL> resourceClass) throws Exception {
         super(url, maxCount, resourceClass);
         this.url=url;
     }
@@ -25,12 +26,12 @@ public class WebResourcePool extends AbstractResourcePool<WebUrl>{
     
     
     @Override
-    protected WebUrl createResource() throws Exception {
-         return new WebUrl(url);
+    protected URL createResource() throws Exception {
+         return new URL(url);
     }
 
     @Override
-    protected void releaseResource(WebUrl resource) throws Exception {
+    protected void releaseResource(URL resource) throws Exception {
          
     }
     

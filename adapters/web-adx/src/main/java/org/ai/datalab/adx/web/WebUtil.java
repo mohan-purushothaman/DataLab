@@ -39,9 +39,8 @@ public class WebUtil {
             method.releaseConnection();
         }
     }
-
-    //TODO remove netbeans external dependency, use latest httpclient
-    public static void getWebResponse(String url, Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, Data data, MappingHelper mapping) throws Exception {
+    
+    public static Map<String, Object> getWebResponse(String url, Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody,Data data) throws Exception {
         HttpMethod method = getMethod(requestType, url, requestBody, data);
 
         if (header != null) {
@@ -57,15 +56,22 @@ public class WebUtil {
             }
         }
         method.setParams(param);
+        return executeMetod(method);
+    }
+    
 
-        Map<String, Object> result = executeMetod(method);
+    //TODO remove netbeans external dependency, use latest httpclient
+    public static void getWebResponse(String url, Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, Data input,Data output, MappingHelper mapping) throws Exception {
+        
+
+        Map<String, Object> result =  getWebResponse(url, header, params, requestType, requestBody, input);
         if (mapping != null) {
             mapping.map(new ValueMapper<String>() {
                 @Override
                 public Object getValue(String id) throws Exception {
                     return result.get(id);
                 }
-            }, data);
+            }, output);
         }
     }
 

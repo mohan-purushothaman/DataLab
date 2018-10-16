@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.adx.web;
 
+import java.net.URL;
 import java.util.Map;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.ExecutionConfig;
@@ -20,8 +21,8 @@ import org.ai.datalab.core.resource.Resource;
  */
 public class HttpWriter extends WebProvider {
 
-    public HttpWriter(Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, MappingHelper mapping, String resourceId) {
-        super(header, params, requestType, requestBody, mapping, resourceId);
+    public HttpWriter(Map<String, String> header, Map<String, String> params, HttpMethodType requestType, String requestBody, String resourceId) {
+        super(header, params, requestType, requestBody, null, resourceId);
     }
 
     @Override
@@ -35,8 +36,8 @@ public class HttpWriter extends WebProvider {
             @Override
             public void writeData(Data data, ExecutionConfig config) throws Exception {
                 WebResourcePool pool = (WebResourcePool) config.getResourcePool();
-                try (Resource<WebUrl> resource = pool.getResource()) {
-                    WebUtil.getWebResponse(resource.get().getUrl(), getHeader(), getParams(), getRequestType(), getRequestBody(), data, null);
+                try (Resource<URL> resource = pool.getResource()) {
+                    WebUtil.getWebResponse(resource.get().toExternalForm(), getHeader(), getParams(), getRequestType(), getRequestBody(), data,data, null);
                 }
             }
         };

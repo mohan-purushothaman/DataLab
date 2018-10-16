@@ -5,15 +5,24 @@
  */
 package org.ai.datalab.adx.web.visual;
 
-import java.sql.Connection;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.JTextComponent;
 import org.ai.datalab.adx.web.HttpMethodType;
-import org.ai.datalab.adx.web.WebUrl;
+import org.ai.datalab.adx.web.HttpProcessor;
+import org.ai.datalab.adx.web.HttpWriter;
+import org.ai.datalab.adx.web.WebResourcePool;
+import org.ai.datalab.adx.web.WebUtil;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
+import org.ai.datalab.core.misc.Type;
+import org.ai.datalab.core.misc.TypeUtil;
+import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.designer.editor.SimpleEditor;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
@@ -40,7 +49,7 @@ public class Http_DesignerPanel extends VisualNodeValidator {
     }
 
     public ComboBoxModel<ResourcePool> getModel() {
-        Collection<ResourcePool> pool = ResourceStore.findResourcePools(WebUrl.class, null);
+        Collection<ResourcePool> pool = ResourceStore.findResourcePools(URL.class, null);
         return new DefaultComboBoxModel<>(pool.toArray(new ResourcePool[0]));
     }
 
@@ -55,52 +64,18 @@ public class Http_DesignerPanel extends VisualNodeValidator {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         requestBody = new javax.swing.JPanel();
-        header = new javax.swing.JPanel();
-        param = new javax.swing.JPanel();
+        header = new org.ai.datalab.adx.web.visual.KeyValuePanel();
+        param = new org.ai.datalab.adx.web.visual.KeyValuePanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         webResource = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        httpMethod = new javax.swing.JComboBox<>();
 
-        javax.swing.GroupLayout requestBodyLayout = new javax.swing.GroupLayout(requestBody);
-        requestBody.setLayout(requestBodyLayout);
-        requestBodyLayout.setHorizontalGroup(
-            requestBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 697, Short.MAX_VALUE)
-        );
-        requestBodyLayout.setVerticalGroup(
-            requestBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 194, Short.MAX_VALUE)
-        );
-
+        requestBody.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab("Request Body", requestBody);
-
-        javax.swing.GroupLayout headerLayout = new javax.swing.GroupLayout(header);
-        header.setLayout(headerLayout);
-        headerLayout.setHorizontalGroup(
-            headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 697, Short.MAX_VALUE)
-        );
-        headerLayout.setVerticalGroup(
-            headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 194, Short.MAX_VALUE)
-        );
-
         jTabbedPane1.addTab("Request Header", header);
-
-        javax.swing.GroupLayout paramLayout = new javax.swing.GroupLayout(param);
-        param.setLayout(paramLayout);
-        paramLayout.setHorizontalGroup(
-            paramLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 697, Short.MAX_VALUE)
-        );
-        paramLayout.setVerticalGroup(
-            paramLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 194, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Request Params", param);
+        jTabbedPane1.addTab("Request Param", param);
 
         jLabel1.setText("URL");
 
@@ -113,7 +88,7 @@ public class Http_DesignerPanel extends VisualNodeValidator {
             }
         });
 
-        jComboBox2.setModel(new DefaultComboBoxModel<HttpMethodType>(HttpMethodType.values())
+        httpMethod.setModel(new DefaultComboBoxModel<HttpMethodType>(HttpMethodType.values())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -126,7 +101,7 @@ public class Http_DesignerPanel extends VisualNodeValidator {
                 .addGap(18, 18, 18)
                 .addComponent(webResource, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(httpMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -139,7 +114,7 @@ public class Http_DesignerPanel extends VisualNodeValidator {
                     .addComponent(jLabel1)
                     .addComponent(webResource, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(httpMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -160,7 +135,7 @@ public class Http_DesignerPanel extends VisualNodeValidator {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -172,25 +147,49 @@ public class Http_DesignerPanel extends VisualNodeValidator {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel header;
+    private org.ai.datalab.adx.web.visual.KeyValuePanel header;
+    private javax.swing.JComboBox<HttpMethodType> httpMethod;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<HttpMethodType> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel param;
+    private org.ai.datalab.adx.web.visual.KeyValuePanel param;
     private javax.swing.JPanel requestBody;
     private javax.swing.JComboBox<ResourcePool> webResource;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public String prepareValidation() {
-        return "";
+        return "Validating Web connector";
     }
 
     @Override
     public DescriptiveExecutionUnit validateConnector(ProgressHandle handle) throws Exception {
-        return null;
+        WebResourcePool pool = (WebResourcePool) webResource.getSelectedItem();
+        HttpMethodType httpMethodType = (HttpMethodType) httpMethod.getSelectedItem();
+        try (Resource<URL> url = pool.getResource()) {
+            Map<String, Object> webResponse = WebUtil.getWebResponse(url.get().toExternalForm(), header.getMap(), param.getMap(), httpMethodType, textArea.getText(), sampleInput);
+            switch (type) {
+                case PROCESSOR: {
+                    MappingHelper helper = new MappingHelper();
+
+                    for (Entry<String, Object> o : webResponse.entrySet()) {
+
+                        Object value = o.getValue();
+
+                        Type detectType = TypeUtil.detectType(value);
+
+                        helper.addIdMap(o.getKey(), o.getKey(), detectType.getConverter(), value);
+                    }
+                    return new HttpExecutionUnit("Process using http connection", new HttpProcessor(header.getMap(), param.getMap(), httpMethodType, textArea.getText(), helper, pool.getResourceId()), sampleInput);
+                }
+                case WRITER: {
+                    return new HttpExecutionUnit("write to http connection", new HttpWriter(header.getMap(), param.getMap(), httpMethodType, textArea.getText(), pool.getResourceId()), sampleInput);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("unexpected operation");
+
     }
 
     @Override
