@@ -48,6 +48,11 @@ public class TypeUtil {
         if (obj instanceof Boolean) {
             return Type.Boolean;
         }
+        
+        if (obj instanceof String) {
+            return Type.String;
+        }
+        
         //if (obj instanceof String) {
         return Type.Object;
         //}

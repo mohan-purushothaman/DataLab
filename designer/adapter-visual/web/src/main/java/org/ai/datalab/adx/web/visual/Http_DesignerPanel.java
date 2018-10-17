@@ -7,6 +7,7 @@ package org.ai.datalab.adx.web.visual;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.ComboBoxModel;
@@ -28,6 +29,8 @@ import org.ai.datalab.designer.editor.SimpleEditor;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.HttpStatus;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
 
@@ -46,6 +49,10 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         this.type = type;
         this.sampleInput = sampleInput;
         textArea = SimpleEditor.addVariableEditorPane(requestBody, this.sampleInput, null);
+        jCheckBox1ActionPerformed(null);
+        if (type == ExecutorType.WRITER) {
+            jTabbedPane1.remove(sampleResponseTab);
+        }
     }
 
     public ComboBoxModel<ResourcePool> getModel() {
@@ -66,6 +73,10 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         requestBody = new javax.swing.JPanel();
         header = new org.ai.datalab.adx.web.visual.KeyValuePanel();
         param = new org.ai.datalab.adx.web.visual.KeyValuePanel();
+        sampleResponseTab = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        sampleResponseText = new javax.swing.JTextArea();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         webResource = new javax.swing.JComboBox<>();
@@ -76,6 +87,42 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         jTabbedPane1.addTab("Request Body", requestBody);
         jTabbedPane1.addTab("Request Header", header);
         jTabbedPane1.addTab("Request Param", param);
+
+        sampleResponseText.setColumns(20);
+        sampleResponseText.setRows(5);
+        jScrollPane1.setViewportView(sampleResponseText);
+
+        jCheckBox1.setText("Do not Make Request, Sample response below");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout sampleResponseTabLayout = new javax.swing.GroupLayout(sampleResponseTab);
+        sampleResponseTab.setLayout(sampleResponseTabLayout);
+        sampleResponseTabLayout.setHorizontalGroup(
+            sampleResponseTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sampleResponseTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(sampleResponseTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(sampleResponseTabLayout.createSequentialGroup()
+                        .addComponent(jCheckBox1)
+                        .addGap(0, 253, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        sampleResponseTabLayout.setVerticalGroup(
+            sampleResponseTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleResponseTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Sample Response", sampleResponseTab);
 
         jLabel1.setText("URL");
 
@@ -145,16 +192,26 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         webResource.setModel(getModel());
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+         
+            sampleResponseText.setVisible(jCheckBox1.isSelected());
+
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.ai.datalab.adx.web.visual.KeyValuePanel header;
     private javax.swing.JComboBox<HttpMethodType> httpMethod;
     private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private org.ai.datalab.adx.web.visual.KeyValuePanel param;
     private javax.swing.JPanel requestBody;
+    private javax.swing.JPanel sampleResponseTab;
+    private javax.swing.JTextArea sampleResponseText;
     private javax.swing.JComboBox<ResourcePool> webResource;
     // End of variables declaration//GEN-END:variables
 
@@ -168,7 +225,16 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         WebResourcePool pool = (WebResourcePool) webResource.getSelectedItem();
         HttpMethodType httpMethodType = (HttpMethodType) httpMethod.getSelectedItem();
         try (Resource<URL> url = pool.getResource()) {
-            Map<String, Object> webResponse = WebUtil.getWebResponse(url.get().toExternalForm(), header.getMap(), param.getMap(), httpMethodType, textArea.getText(), sampleInput);
+
+            Map<String, Object> webResponse;
+
+            if (jCheckBox1.isSelected()) {
+                webResponse = new HashMap<>();
+                webResponse.put(WebUtil.RESPONSE, sampleResponseText.getText());
+                webResponse.put(WebUtil.STATUS_CODE, HttpStatus.SC_OK);
+            } else {
+                webResponse = WebUtil.getWebResponse(url.get().toExternalForm(), header.getMap(), param.getMap(), httpMethodType, textArea.getText(), sampleInput);
+            }
             switch (type) {
                 case PROCESSOR: {
                     MappingHelper helper = new MappingHelper();
