@@ -11,7 +11,7 @@
     <artifactId>designer-app</artifactId>
     <packaging>nbm-application</packaging>
 
-    <name>designer-app</name>
+    <name>DataLab Designer Application</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

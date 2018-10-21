@@ -21,7 +21,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Mohan Purushothaman
  */
 @ServiceProvider(service = ResourceCreator.class)
-public class HttpResourceCreator extends ResourceCreator {
+public class HttpResourceCreator extends ResourceCreator<URL> {
 
     @Override
     public JComponent getDetailsPanel(ResourcePool pool) {
@@ -29,7 +29,7 @@ public class HttpResourceCreator extends ResourceCreator {
     }
 
     @Override
-    public ResourcePool createResourcePool() {
+    public ResourcePool<URL> createResourcePool() {
         try {
             HttpResourcePoolCreatorPanel panel = new HttpResourcePoolCreatorPanel();
             DialogDescriptor dd = new DialogDescriptor(panel, "Create new web resource");
@@ -48,6 +48,11 @@ public class HttpResourceCreator extends ResourceCreator {
     @Override
     public String getDisplayName() {
         return "Web Resource (http/https)";
+    }
+
+    @Override
+    public Class<URL> getResourceClass() {
+        return URL.class;
     }
 
 }

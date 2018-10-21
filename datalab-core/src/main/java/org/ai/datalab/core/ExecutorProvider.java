@@ -26,6 +26,8 @@ public interface ExecutorProvider {
         return null;
     }
 
+    public void setResourceId(String resourceId);
+
     public static ExecutorProvider getReaderInstance(Class<? extends Reader> reader, Object... construtorArgs) {
         return getInstance(ExecutorType.READER, reader, construtorArgs);
     }
@@ -107,6 +109,11 @@ class DefaultExecutorProviderImpl implements ExecutorProvider {
             }
         }
         return true;
+    }
+
+    @Override
+    public void setResourceId(String resourceId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

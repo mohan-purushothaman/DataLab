@@ -5,17 +5,13 @@
  */
 package org.ai.datalab.core;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.misc.Configuration;
 

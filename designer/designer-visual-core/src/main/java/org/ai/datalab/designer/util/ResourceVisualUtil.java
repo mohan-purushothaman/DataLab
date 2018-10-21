@@ -7,7 +7,6 @@ package org.ai.datalab.designer.util;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import org.ai.datalab.core.resource.ResourceFactory;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.core.resource.ResourcePoolQualifier;

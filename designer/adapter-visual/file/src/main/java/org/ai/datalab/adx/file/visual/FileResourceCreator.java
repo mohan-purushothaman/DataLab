@@ -19,7 +19,7 @@ import org.ai.datalab.designer.visual.resource.ResourceCreator;
  * @author Mohan Purushothaman
  */
 @ServiceProvider(service = ResourceCreator.class)
-public class FileResourceCreator extends ResourceCreator {
+public class FileResourceCreator extends ResourceCreator<File> {
 
     @Override
     public JComponent getDetailsPanel(ResourcePool pool) {
@@ -43,6 +43,11 @@ public class FileResourceCreator extends ResourceCreator {
     @Override
     public String getDisplayName() {
         return "File Resource";
+    }
+
+    @Override
+    public Class<File> getResourceClass() {
+        return File.class;
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.adx.db.visual;
 
+import java.sql.Connection;
 import javax.swing.JComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -19,10 +20,10 @@ import org.ai.datalab.designer.visual.resource.ResourceCreator;
  * @author Mohan Purushothaman
  */
 @ServiceProvider(service = ResourceCreator.class)
-public class JDBC_ResourceCreater extends ResourceCreator {
+public class JDBC_ResourceCreater extends ResourceCreator<Connection> {
 
     @Override
-    public ResourcePool createResourcePool() {
+    public ResourcePool<Connection> createResourcePool() {
 
         JDBCPanel panel = new JDBCPanel();
         NotifyDescriptor n = new DialogDescriptor(panel, "Create new JDBC Resource");
@@ -40,6 +41,11 @@ public class JDBC_ResourceCreater extends ResourceCreator {
     @Override
     public JComponent getDetailsPanel(ResourcePool pool) {
         return new JDBCPanel(true, pool);
+    }
+
+    @Override
+    public Class<Connection> getResourceClass() {
+        return Connection.class;
     }
 
 }

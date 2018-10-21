@@ -86,6 +86,10 @@ public class ResourceStore {
             getStream().toXML(pool, o);
         }
     }
+    
+    public static final ResourcePool getResourcePool(String id) {
+        return ResourceFactory.getResourcePool(id);
+    }
 
     public static Collection<ResourcePool> getResourceList() {
         return ResourceFactory.getResourceList();

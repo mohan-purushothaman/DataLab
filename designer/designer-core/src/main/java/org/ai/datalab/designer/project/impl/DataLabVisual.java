@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -44,6 +45,7 @@ import org.ai.datalab.core.DataJob;
 import org.ai.datalab.designer.DataLabGraphDesigner;
 import org.ai.datalab.designer.DataLabUtil;
 import org.ai.datalab.designer.graph.action.*;
+import org.ai.datalab.designer.misc.ResourceValidatorUtil;
 import org.ai.datalab.visual.impl.DataLabListenerGraph;
 
 @MultiViewElement.Registration(
@@ -242,6 +244,18 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
                     InstanceContent lkpContent = new InstanceContent();
                     ProgressTopComponent p = new ProgressTopComponent();
                     DataJob job = graphScene.createDataJob(obj.getName() + " Progress");
+
+
+                    if (!ResourceValidatorUtil.findMissingResources(job).isEmpty()) {
+                        if(ResourceValidatorUtil.autoCorrectResourcesMismatches(job)){
+                            obj.setModified(true);
+                        }
+                    }
+                    
+                    if (!ResourceValidatorUtil.findMissingResources(job).isEmpty()) {
+                        return;
+                    }
+
                     DataLabListenerGraph g = new DataLabListenerGraph(job, graphScene.getTheme(), job.getName(), new AbstractAction() {
                         @Override
                         public void actionPerformed(ActionEvent e) {

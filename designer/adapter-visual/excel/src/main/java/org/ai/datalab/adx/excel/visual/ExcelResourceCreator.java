@@ -20,7 +20,7 @@ import org.ai.datalab.designer.visual.resource.ResourceCreator;
  * @author Mohan Purushothaman
  */
 @ServiceProvider(service = ResourceCreator.class)
-public class ExcelResourceCreator extends ResourceCreator {
+public class ExcelResourceCreator extends ResourceCreator<File> {
 
     @Override
     public JComponent getDetailsPanel(ResourcePool pool) {
@@ -28,7 +28,7 @@ public class ExcelResourceCreator extends ResourceCreator {
     }
 
     @Override
-    public ResourcePool createResourcePool() {
+    public ResourcePool<File> createResourcePool() {
         File f = new FileChooserBuilder(ResourceCreator.class).setFileFilter(ExcelUtil.EXCEL_FILTER).showSaveDialog();
         if (f != null) {
             try {
@@ -42,7 +42,12 @@ public class ExcelResourceCreator extends ResourceCreator {
 
     @Override
     public String getDisplayName() {
-        return "File Resource";
+        return "Excel File Resource";
+    }
+
+    @Override
+    public Class<File> getResourceClass() {
+        return File.class;
     }
 
 }   

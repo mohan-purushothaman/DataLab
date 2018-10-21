@@ -14,12 +14,12 @@ import org.ai.datalab.core.adx.misc.MappingHelper;
 public abstract class AbstractExecutorProvider implements ExecutorProvider {
 
     private MappingHelper mapping;
-    
-    private final String resourceId;
 
-    public AbstractExecutorProvider(MappingHelper mapping,String resourceId) {
+    private String resourceId;
+
+    public AbstractExecutorProvider(MappingHelper mapping, String resourceId) {
         this.mapping = mapping;
-        this.resourceId=resourceId;
+        this.resourceId = resourceId;
     }
 
     public MappingHelper getMapping() {
@@ -33,6 +33,11 @@ public abstract class AbstractExecutorProvider implements ExecutorProvider {
     @Override
     public String getResourceID() {
         return resourceId;
+    }
+
+    @Override
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 
 }

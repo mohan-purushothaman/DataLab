@@ -6,18 +6,19 @@
 package org.ai.datalab.designer.visual.resource;
 
 import javax.swing.JComponent;
-import org.openide.NotifyDescriptor;
 import org.ai.datalab.core.resource.ResourcePool;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public abstract class ResourceCreator {
+public abstract class ResourceCreator<V> {
     
     public abstract JComponent getDetailsPanel(ResourcePool pool);
 
-    public abstract ResourcePool createResourcePool();
+    public abstract <V> ResourcePool<V> createResourcePool();
+    
+    public abstract Class<V> getResourceClass();
 
     public abstract String getDisplayName();
 
