@@ -101,7 +101,13 @@ public class DataJob {
 
     public final void interruptJob() {
         for (ExecutorService executingService : executingServices) {
-            List<Runnable> p = executingService.shutdownNow();
+
+            try {
+                List<Runnable> p = executingService.shutdownNow();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
         }
     }
 

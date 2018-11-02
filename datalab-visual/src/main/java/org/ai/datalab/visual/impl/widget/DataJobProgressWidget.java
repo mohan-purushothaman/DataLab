@@ -5,8 +5,13 @@
  */
 package org.ai.datalab.visual.impl.widget;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.AbstractList;
+import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -19,6 +24,10 @@ import org.ai.datalab.core.JobState;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.visual.DataLabTheme;
 import org.ai.datalab.visual.impl.DataLabProgressHandler;
+import org.ai.datalab.visual.impl.widget.misc.DataDisplayer;
+import org.ai.datalab.visual.impl.widget.misc.DataDisplayerCreater;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 
 public class DataJobProgressWidget extends Widget {
 
@@ -43,48 +52,44 @@ public class DataJobProgressWidget extends Widget {
 
         labelWidget = new AbbreviatedLabelWidget(scene, unit.getDescription());
         successLabel = new LabelWidget(scene, "0");
+        successLabel.setToolTipText("Completed Count");
         successLabel.setBorder(successBorder);
         successLabel.setOpaque(true);
-        
+
         avgLabel = new LabelWidget(scene, "0");
+        avgLabel.setToolTipText("Average time taken");
         avgLabel.setBorder(successBorder);
         avgLabel.setOpaque(true);
 
         failureLabel = new LabelWidget(scene, "0");
+        failureLabel.setToolTipText("Failure Count");
         failureLabel.setBorder(failureBorder);
         failureLabel.setOpaque(true);
 
         statusWidget = new LabelWidget(scene, "Yet to Start");
+        statusWidget.setToolTipText("status");
 
         addChild(labelWidget);
         addChild(successLabel);
         addChild(avgLabel);
         addChild(failureLabel);
-//        failureLabel.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
-//
-//            @Override
-//            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
-//                JPopupMenu popup = new JPopupMenu();
-//                popup.add(new WidgetMenuItem(scene, "details", new ActionListener() {
-//
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        //InputOutput io=IOProvider.getDefault().getIO("Error Data", false);
-//                        ErrorDataTopComponent etc = ErrorDataTopComponent.getDefaultComponent();
-//                        Mode myMode = WindowManager.getDefault().findMode("output");
-//                        if (myMode != null) {
-//                            myMode.dockInto(etc);
-//                        } else {
-//
-//                        }
-//                        etc.open();
-//                        etc.requestActive();
-//                        etc.updateData(progressHandler);
-//                    }
-//                }));
-//                return popup;
-//            }
-//        }));
+        failureLabel.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
+
+            @Override
+            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                JPopupMenu popup = new JPopupMenu();
+                popup.add(new WidgetMenuItem(scene, "details", new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        DataDisplayer dataDisplayer = DataDisplayerCreater.getDataDisplayer("Error Details : " + unit.getDescription());
+                        dataDisplayer.addData(progressHandler.getErrorData());
+                    }
+                }));
+                return popup;
+            }
+        }));
         addChild(statusWidget);
         theme.installUI(this);
         setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 8));
@@ -105,6 +110,7 @@ public class DataJobProgressWidget extends Widget {
     public void setAvg(String avg) {
         avgLabel.setLabel(avg);
     }
+
     public void setErrorProgress(String progress) {
         failureLabel.setLabel(progress);
     }
@@ -129,15 +135,14 @@ public class DataJobProgressWidget extends Widget {
     public void updateState(JobState state) {
         statusWidget.setLabel(state.toString());
         statusWidget.setForeground(theme.getColor(state));
-      
 
     }
 
     public void init() {
-         //added to avoid size issues on other widgets 
-            for (Widget w : getChildren()) {
-                w.revalidate();
-            }
+        //added to avoid size issues on other widgets 
+        for (Widget w : getChildren()) {
+            w.revalidate();
+        }
     }
 
 }

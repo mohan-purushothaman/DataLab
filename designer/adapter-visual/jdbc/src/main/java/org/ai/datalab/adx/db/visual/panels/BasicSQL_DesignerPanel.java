@@ -8,6 +8,7 @@ package org.ai.datalab.adx.db.visual.panels;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.ComboBoxModel;
 import javax.swing.text.JTextComponent;
 import org.netbeans.api.options.OptionsDisplayer;
@@ -156,7 +157,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
-        resourcePools.setModel((ComboBoxModel<ResourcePool<Connection>>)ResourceVisualUtil.getResourceComboBox(Connection.class,null));
+        resourcePools.setModel((ComboBoxModel<ResourcePool<Connection>>) ResourceVisualUtil.getResourceComboBox(Connection.class, null));
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -188,7 +189,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
     private AbstractExecutorProvider getProvider(ResourcePool<Connection> pool, String query, MappingHelper mapping) {
         switch (type) {
             case READER:
-                return DB_Adapter.createReader(pool, query, mapping,1);
+                return DB_Adapter.createReader(pool, query, mapping, 1);
             case PROCESSOR:
                 return new DB_Processor(pool, query, mapping);
             case WRITER:
@@ -204,10 +205,8 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
             try (Connection c = r.get()) {
                 try {
                     c.setAutoCommit(false);
-                    PreparedQuery pQuery = new PreparedQuery(query);
-                    try (PreparedStatement p = c.prepareStatement(pQuery.getPreparedQuery())) {
-                        pQuery.populateParams(p, sampleInput);
-                        if (p.execute()) {
+                    try (Statement p = c.createStatement()) {
+                        if (p.execute(DataUtil.substituteData(query, sampleInput))) {
                             ResultSet set = p.getResultSet();
                             boolean rowExists = set.next();
                             for (int i = 1; i <= set.getMetaData().getColumnCount(); i++) {
@@ -217,7 +216,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
 
                                 Type detectedType = TypeUtil.detectType(val);
 
-                                mapping.addIdMap(columnName, name, detectedType.getConverter(),  val);
+                                mapping.addIdMap(columnName, name, detectedType.getConverter(), val);
                             }
 
                         } else {

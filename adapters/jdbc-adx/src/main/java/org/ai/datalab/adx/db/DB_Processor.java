@@ -21,6 +21,7 @@ import org.ai.datalab.core.adx.misc.ValueMapper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Processor;
 import org.ai.datalab.core.executor.impl.SimpleUpdateProcessor;
+import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
@@ -31,9 +32,8 @@ import org.ai.datalab.core.resource.ResourcePool;
  */
 public class DB_Processor extends DB_Provider {
 
-
     public DB_Processor(ResourcePool<Connection> pool, String query, MappingHelper<String> mapping) {
-        super(query,mapping, pool.getResourceId());
+        super(query, mapping, pool.getResourceId());
     }
 
     @Override
@@ -44,24 +44,22 @@ public class DB_Processor extends DB_Provider {
     @Override
     public Executor getNewExecutor() {
         return new SimpleUpdateProcessor() {
-            private PreparedQuery pQuery;
             private final MappingHelper<String> mapping = getMapping();
 
             @Override
             public void init(ExecutionConfig config) throws Exception {
-                this.pQuery = new PreparedQuery(getQuery());
             }
 
             @Override
             public void updateData(Data data, ExecutionConfig config) throws Exception {
+                String query = DataUtil.substituteData(getQuery(), data);
                 try (Resource<Connection> r = ((ResourcePool<Connection>) config.getResourcePool()).getResource()) {
-                    try (PreparedStatement p = r.get().prepareStatement(pQuery.getPreparedQuery())) {
+                    try (Statement s = r.get().createStatement()) {
 
-                        pQuery.populateParams(p, data);
-                        boolean isSelect = p.execute();
+                        boolean isSelect = s.execute(query);
                         if (mapping != null) {
                             if (isSelect) {
-                                ResultSet set = p.getResultSet();
+                                ResultSet set = s.getResultSet();
                                 if (set.next()) {
                                     mapping.map(new ValueMapper<String>() {
                                         @Override
@@ -75,7 +73,7 @@ public class DB_Processor extends DB_Provider {
                                 mapping.map(new ValueMapper<String>() {
                                     @Override
                                     public Object getValue(String id) throws Exception {
-                                        return p.getUpdateCount();
+                                        return s.getUpdateCount();
                                     }
                                 }, data);
 
@@ -87,7 +85,5 @@ public class DB_Processor extends DB_Provider {
             }
         };
     }
-
-   
 
 }

@@ -21,7 +21,7 @@ import org.ai.datalab.core.misc.SimpleData;
 public class NumberReader implements Reader {
 
     public static final long start = 0;
-    public static  final long end = 10000000;
+    public static  final long end = 10;
 
     private long i = end;
 

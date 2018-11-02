@@ -98,7 +98,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
             Graphics2D graphics = image.createGraphics();
             graphics.drawImage(sourceImage, 0, 0, null);
             graphics.dispose();
-            PAINT_BACKGROUND = new TexturePaint(image, new Rectangle(0, 0, width, height));
+            PAINT_BACKGROUND = new Color(255, 250, 250);//new TexturePaint(image, new Rectangle(0, 0, width, height));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -271,7 +271,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
 
     @Override
     public void updateErrorProgress(ExecutionUnit primitive, int threadNo, Throwable t, Data... data) {
-        getProgressHandler(primitive).updateErrorProgress(1, t, data);
+        getProgressHandler(primitive).updateErrorProgress(data.length, t, data);
         t.printStackTrace();
     }
 

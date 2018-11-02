@@ -43,7 +43,7 @@ public class CumulativeResult {
     }
 
     public long getAvgProcessTime() {
-        return TimeUnit.NANOSECONDS.convert(getProcessedNanoSeconds() / getProcessedCount(), TimeUnit.NANOSECONDS);
+        return TimeUnit.NANOSECONDS.convert(getProcessedNanoSeconds() / Math.max(getProcessedCount(),1), TimeUnit.NANOSECONDS);
     }
 
     public String[] getResourceSet() {
