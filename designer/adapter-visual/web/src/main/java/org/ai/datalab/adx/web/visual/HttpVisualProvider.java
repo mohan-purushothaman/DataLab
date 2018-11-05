@@ -11,6 +11,7 @@ import org.ai.datalab.core.Data;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
+import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -22,7 +23,12 @@ public class HttpVisualProvider extends VisualNodeProvider {
 
     @Override
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
-        return new Http_DesignerPanel(type, sampleInput);
+        return new Http_DesignerPanel(null,type, sampleInput);
+    }
+    
+    @Override
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+        return new Http_DesignerPanel(unit,unit.getProvidingType(), sampleInput);
     }
 
     @Override
@@ -34,6 +40,8 @@ public class HttpVisualProvider extends VisualNodeProvider {
     public Set<ExecutorType> getSupportedTypes() {
         return EnumSet.of(ExecutorType.PROCESSOR,ExecutorType.WRITER);
     }
+
+    
     
     
     

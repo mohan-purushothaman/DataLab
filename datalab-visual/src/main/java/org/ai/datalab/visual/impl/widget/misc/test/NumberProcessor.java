@@ -24,7 +24,7 @@ public class NumberProcessor implements Processor{
         for (Data d : data) {
             d.setValue("j",null, ((Number)d.getValue("i")).longValue()*2);
         }
-        int i=1/0;
+        //int i=1/0;
         return data;
     }
 

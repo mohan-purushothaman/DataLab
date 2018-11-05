@@ -16,16 +16,19 @@ public enum ExecutorType {
     PROCESSOR(Processor.class),
     CONDITION(Condition.class),
     WRITER(Writer.class);
-      
-    
-    private final Class baseClass; 
+
+    private final Class baseClass;
 
     private ExecutorType(Class baseClass) {
         this.baseClass = baseClass;
     }
-            
-     
-    public boolean isInstance(Executor obj){
+
+    public boolean isInstance(Executor obj) {
         return baseClass.isInstance(obj);
     }
+
+    public boolean doesProduceOutput() {
+        return this == READER || this == PROCESSOR;
+    }
+
 }

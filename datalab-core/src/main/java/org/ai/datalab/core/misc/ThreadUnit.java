@@ -147,7 +147,7 @@ public final class ThreadUnit implements Runnable {
                 }
                 copyDataToOutputStream(data);
 
-                listener.updateProgress(providerUnit, threadNo, new ExecutionResult(1, System.nanoTime() - lastUpdateTime, 1, config));
+                listener.updateProgress(providerUnit, threadNo, new ExecutionResult(1, System.nanoTime() - lastUpdateTime, 1, config),data);
                 lastUpdateTime = System.nanoTime();
             } catch (InterruptedException ex) {
                 isInterrupted = true;
@@ -169,7 +169,7 @@ public final class ThreadUnit implements Runnable {
                 try {
                     Data[] outputData = processJob.processData(data, config);
                     copyDataToOutputStream(outputData);
-                    listener.updateProgress(providerUnit, threadNo, new ExecutionResult(data.length, System.nanoTime() - lastUpdateTime, outputData != null ? outputData.length : 0, config));
+                    listener.updateProgress(providerUnit, threadNo, new ExecutionResult(data.length, System.nanoTime() - lastUpdateTime, outputData != null ? outputData.length : 0, config),outputData);
                     lastUpdateTime = System.nanoTime();
                 } catch (InterruptedException ex) {
                     isInterrupted = true;

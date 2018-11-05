@@ -87,7 +87,7 @@ public class FilePatternParser {
         } else {
 
             mapping.map((String id) -> {
-                return new Object[]{map.get(id)};
+                return map.get(id);
             }, newData);
         }
 

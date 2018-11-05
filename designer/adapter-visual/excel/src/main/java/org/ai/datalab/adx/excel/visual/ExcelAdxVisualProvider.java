@@ -12,6 +12,7 @@ import org.ai.datalab.core.Data;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
+import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
  *
@@ -22,7 +23,7 @@ public class ExcelAdxVisualProvider extends VisualNodeProvider {
 
     @Override
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
-        return new ExcelConnectorPanel(type, sampleInput);
+        return new ExcelConnectorPanel(null,type, sampleInput);
     }
 
    @Override
@@ -33,5 +34,10 @@ public class ExcelAdxVisualProvider extends VisualNodeProvider {
      @Override
     public Set<ExecutorType> getSupportedTypes() {
         return EnumSet.of(ExecutorType.READER, ExecutorType.WRITER);
+    }
+
+    @Override
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+        return new ExcelConnectorPanel(unit,unit.getProvidingType(), sampleInput);
     }
 }

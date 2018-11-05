@@ -25,7 +25,7 @@ public class SimpleDataDisplayer extends javax.swing.JFrame {
     }
 
     public DataDisplayer getDataDisplayer() {
-        return ((DataModel) jTable1.getModel());
+        return ((SimpleDataModel) jTable1.getModel());
     }
 
     /**
@@ -42,7 +42,7 @@ public class SimpleDataDisplayer extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new DataModel());
+        jTable1.setModel(new SimpleDataModel());
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -72,63 +72,4 @@ public class SimpleDataDisplayer extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 }
 
-class DataModel extends AbstractTableModel implements DataDisplayer {
 
-    private final List<Data> values = new ArrayList<>();
-
-    private String[] columnNames;
-
-    @Override
-    public int getRowCount() {
-        return values.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        if (columnNames != null) {
-            return columnNames.length;
-        }
-        return 0;
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-
-        Data data = values.get(rowIndex);
-        return data.getValue(columnNames[columnIndex]);
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
-    }
-
-    @Override
-    public void addData(Data data) {
-        initColumnNames(data);
-        values.add(data);
-        fireTableStructureChanged();
-    }
-
-    @Override
-    public void addData(Collection<Data> data) {
-        if (!data.isEmpty()) {
-            initColumnNames(data.iterator().next());
-        }
-        values.addAll(data);
-        fireTableStructureChanged();
-    }
-
-    private void initColumnNames(Data data) {
-        if (columnNames == null) {
-            columnNames = data.getKeyNames().toArray(new String[0]);
-            fireTableStructureChanged();
-        }
-    }
-
-}

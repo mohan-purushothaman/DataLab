@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.AbstractTableModel;
+import org.ai.datalab.adapter.excel.adx.ExcelProvider;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -42,15 +43,22 @@ public class ExcelConnectorPanel extends VisualNodeValidator {
 
     private final ExecutorType type;
     private final Data sampleInput;
+    private final DescriptiveExecutionUnit existingUnit;
 
-    /**
-     * Creates new form ExcelConnectorPanel
-     */
-    public ExcelConnectorPanel(ExecutorType type, Data sampleInput) {
+    public ExcelConnectorPanel(DescriptiveExecutionUnit unit, ExecutorType type, Data sampleInput) {
         this.type = type;
         this.sampleInput = sampleInput;
+        this.existingUnit = unit;
         initComponents();
         jComboBox1ActionPerformed(null);
+
+        if (this.existingUnit != null && this.existingUnit instanceof ExcelExecutionUnit) {
+            ExcelProvider provider = (ExcelProvider) this.existingUnit.getExecutorProvider();
+            jComboBox1.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
+            sheetNames.setSelectedItem(provider.getSheetName());
+            hasHeader.setSelected(provider.isHasHeader());
+        }
+
     }
 
     /**
@@ -243,7 +251,7 @@ public class ExcelConnectorPanel extends VisualNodeValidator {
         boolean isHasHeader = hasHeader.isSelected();
 
         if (type == ExecutorType.READER) {
-            MappingHelper mapping = getMapping(ref.get(),isHasHeader);
+            MappingHelper mapping = getMapping(ref.get(), isHasHeader);
             return new ExcelExecutionUnit("reading from excel", new ExcelReader(mapping, pool, sheetName, isHasHeader), sampleInput);
         } else {
             return new ExcelExecutionUnit("writing to excel", new ExcelWriter(pool, sheetName, isHasHeader), sampleInput);
@@ -314,10 +322,9 @@ public class ExcelConnectorPanel extends VisualNodeValidator {
         for (int i = 0; i < size; i++) {
             String id = DataUtil.normalizeFieldKey(hasHeader ? String.valueOf(data[0][i]) : "FIELD_" + i, sampleInput);
             Object value = hasHeader ? data[1][i] : data[0][i];
-            Type type=TypeUtil.detectType(value);
-            
-            
-            mapping.addIdMap(i,id, type.getConverter(),value);
+            Type type = TypeUtil.detectType(value);
+
+            mapping.addIdMap(i, id, type.getConverter(), value);
         }
 
         return mapping;

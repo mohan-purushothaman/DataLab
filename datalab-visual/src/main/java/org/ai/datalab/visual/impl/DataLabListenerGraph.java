@@ -11,15 +11,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.TexturePaint;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.EnumSet;
 import java.util.concurrent.Future;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
@@ -265,8 +261,8 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
     }
 
     @Override
-    public void updateProgress(ExecutionUnit primitive, int threadNo, ExecutionResult result) {
-        getProgressHandler(primitive).updateProgress(result);
+    public void updateProgress(ExecutionUnit primitive, int threadNo, ExecutionResult result,Data... outputData) {
+        getProgressHandler(primitive).updateProgress(result,outputData);
     }
 
     @Override

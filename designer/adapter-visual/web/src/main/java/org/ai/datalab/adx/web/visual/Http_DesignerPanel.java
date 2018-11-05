@@ -16,6 +16,7 @@ import javax.swing.text.JTextComponent;
 import org.ai.datalab.adx.web.HttpMethodType;
 import org.ai.datalab.adx.web.HttpProcessor;
 import org.ai.datalab.adx.web.HttpWriter;
+import org.ai.datalab.adx.web.WebProvider;
 import org.ai.datalab.adx.web.WebResourcePool;
 import org.ai.datalab.adx.web.WebUtil;
 import org.ai.datalab.core.Data;
@@ -42,17 +43,29 @@ public class Http_DesignerPanel extends VisualNodeValidator {
 
     private final ExecutorType type;
     private final Data sampleInput;
+    private final DescriptiveExecutionUnit existingUnit;
     private final JTextComponent textArea;
 
-    public Http_DesignerPanel(ExecutorType type, Data sampleInput) {
+    public Http_DesignerPanel(DescriptiveExecutionUnit existingUnit, ExecutorType type, Data sampleInput) {
         initComponents();
         this.type = type;
         this.sampleInput = sampleInput;
+        this.existingUnit = existingUnit;
         textArea = SimpleEditor.addVariableEditorPane(requestBody, this.sampleInput, null);
         jCheckBox1ActionPerformed(null);
         if (type == ExecutorType.WRITER) {
             jTabbedPane1.remove(sampleResponseTab);
         }
+        
+           if (this.existingUnit != null && this.existingUnit instanceof HttpExecutionUnit) {
+            HttpExecutionUnit unit=(HttpExecutionUnit) this.existingUnit;
+            WebProvider provider=(WebProvider) unit.getExecutorProvider();
+            webResource.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
+            httpMethod.setSelectedItem(provider.getRequestType());
+            textArea.setText(provider.getRequestBody());
+            //ADD header and footer
+        }
+        
     }
 
     public ComboBoxModel<ResourcePool> getModel() {
@@ -193,8 +206,8 @@ public class Http_DesignerPanel extends VisualNodeValidator {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-         
-            sampleResponseText.setVisible(jCheckBox1.isSelected());
+
+        sampleResponseText.setVisible(jCheckBox1.isSelected());
 
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 

@@ -8,8 +8,6 @@ package org.ai.datalab.visual.impl.widget;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.AbstractList;
-import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.netbeans.api.visual.border.Border;
@@ -25,7 +23,7 @@ import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.visual.DataLabTheme;
 import org.ai.datalab.visual.impl.DataLabProgressHandler;
 import org.ai.datalab.visual.impl.widget.misc.DataDisplayer;
-import org.ai.datalab.visual.impl.widget.misc.DataDisplayerCreater;
+import org.ai.datalab.visual.impl.widget.misc.DataDisplayerCreator;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 
@@ -83,13 +81,34 @@ public class DataJobProgressWidget extends Widget {
                     @Override
                     public void actionPerformed(ActionEvent e) {
 
-                        DataDisplayer dataDisplayer = DataDisplayerCreater.getDataDisplayer("Error Details : " + unit.getDescription());
+                        DataDisplayer dataDisplayer = DataDisplayerCreator.getDataDisplayer("Error Details : " + unit.getDescription());
                         dataDisplayer.addData(progressHandler.getErrorData());
                     }
                 }));
                 return popup;
             }
         }));
+
+        if (unit.getProvidingType().doesProduceOutput()) {
+
+            getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
+
+                @Override
+                public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                    JPopupMenu popup = new JPopupMenu();
+                    popup.add(new WidgetMenuItem(scene, "show live output", new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            DataDisplayer dataDisplayer = DataDisplayerCreator.getDataDisplayer("Processed Data Details : " + unit.getDescription());
+                            progressHandler.addProgressListener(dataDisplayer);
+                        }
+                    }));
+                    return popup;
+                }
+            }));
+        }
         addChild(statusWidget);
         theme.installUI(this);
         setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 8));

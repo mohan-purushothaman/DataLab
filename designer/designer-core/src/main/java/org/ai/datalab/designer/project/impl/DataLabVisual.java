@@ -87,6 +87,15 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
 
             //CloneableTopComponent.get
             obj.setSavable(new DataLabSavable(graphScene, obj));
+            
+            DataJob job=graphScene.createDataJob("Temp");
+            
+            if (!ResourceValidatorUtil.findMissingResources(job).isEmpty()) {
+                        if(ResourceValidatorUtil.autoCorrectResourcesMismatches(job)){
+                            obj.setModified(true);
+                        }
+                    }
+            
         } catch (Exception e) {
             JTextPane p = new JTextPane();
             p.setEditable(false);
@@ -189,7 +198,6 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
     }
 
     @Messages({
-        "# {0} - file name", "MSG_SaveModified=File {0} is modified. Save?",
         "MSG_SaveModified_no_name=File is modified. Save?"
     })
     @Override
@@ -209,7 +217,7 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
             };
             Node n = obj.getLookup().lookup(Node.class);
             if (n != null) {
-                save.putValue(Action.LONG_DESCRIPTION, Bundle.MSG_SaveModified(n.getDisplayName()));
+                save.putValue(Action.LONG_DESCRIPTION, "File "+n.getDisplayName()+" is modified. Save?"); 
             }
             return MultiViewFactory.createUnsafeCloseState(null, save, new AbstractAction() {
 

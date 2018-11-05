@@ -24,7 +24,7 @@ public interface DataLabJobListener {
 
     public void jobInterrupted(ExecutionUnit executor, int threadNo, Throwable t);
 
-    public void updateProgress(ExecutionUnit executor, int threadNo, ExecutionResult result);
+    public void updateProgress(ExecutionUnit executor, int threadNo, ExecutionResult result,Data... outputData );
 
     public void updateErrorProgress(ExecutionUnit executor, int threadNo, Throwable t, Data... data);
 
@@ -52,7 +52,7 @@ public interface DataLabJobListener {
         }
 
         @Override
-        public void updateProgress(ExecutionUnit executor, int threadNo, ExecutionResult result) {
+        public void updateProgress(ExecutionUnit executor, int threadNo, ExecutionResult result,Data... data) {
         }
 
         @Override

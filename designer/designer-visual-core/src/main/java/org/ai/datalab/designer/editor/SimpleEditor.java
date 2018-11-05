@@ -7,6 +7,8 @@ package org.ai.datalab.designer.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -17,6 +19,8 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
@@ -49,7 +53,7 @@ public interface SimpleEditor {
 
     public static final String SAMPLE_INPUT = "sampleInput";
 
-    public static JTextComponent addVariableEditorPane(JPanel panel, Data sampleInput, VariableHighlighterListener listener) {
+    public static JTextComponent addVariableEditorPane(JPanel panel, Data sampleInput, TextListener listener) {
 
         try {
 
@@ -88,7 +92,23 @@ public interface SimpleEditor {
 //
 //            });
             if (listener != null) {
-                editorPane.addCaretListener(new VariableFinder(editorPane, listener));
+                editorPane.getDocument().addDocumentListener(new DocumentListener() {
+
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        listener.textValueChanged(new TextEvent(e.getDocument(), TextEvent.TEXT_FIRST));
+                    }
+
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        listener.textValueChanged(new TextEvent(e.getDocument(), TextEvent.TEXT_FIRST));
+                    }
+
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
+
+                    }
+                });
             }
             editorPane.setText("");
             editorPane.getDocument().putProperty(SAMPLE_INPUT, sampleInput);

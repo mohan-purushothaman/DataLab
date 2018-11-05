@@ -24,6 +24,8 @@ import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.apache.commons.lang.StringUtils;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -35,15 +37,37 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
 
     private JPanel progressPanel;
 
+    private VisualNodeProvider currentProvider;
+
+    private boolean showEditPanel;
+
     public InputWizard(ExecutorWizardIterator iterator) {
         super(iterator);
     }
 
     @Override
     public Component getComponent() {
-        if (panel == null) {
+        if (currentProvider == null) {
             return null;
         }
+        ExecutorWizardIterator iterator = getIterator();
+        if (showEditPanel) {
+            this.panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput());
+        } else {
+            this.panel = currentProvider.createProviderPanel(((TypeFilterWizard) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL)).getExecutorType(), iterator.getSampleInput());
+        }
+
+        if (panel instanceof JComponent) { // assume Swing components
+            JComponent jc = (JComponent) panel;
+
+            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 1);
+            //displayNames[1] = provider.getProviderName();
+            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, ((JComponent) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL).getComponent()).getClientProperty(WizardDescriptor.PROP_CONTENT_DATA));
+            jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+        }
+
         JPanel fullPanel = new JPanel(new BorderLayout());
         fullPanel.add(panel, BorderLayout.CENTER);
         progressPanel = new JPanel(new BorderLayout(20, 0));
@@ -57,23 +81,16 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
 
         ExecutorWizardIterator iterator = getIterator();
         //TODO existing support
-//        VisualNodeProvider editProvider = getNearestVisualProvider(existingNode);
-//        if (existingNode != null && (provider == null || editProvider.getClass() == provider.getClass())) {
-//            provider=editProvider;
-//            this.component = editProvider.createEditPanel(existingNode, sampleInput, acceptor);
-//        } else {
-        this.panel = provider.createProviderPanel(((TypeFilterWizard) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL)).getExecutorType(), iterator.getSampleInput());
-//        }
+        DescriptiveExecutionUnit existingNode = iterator.getExistingNode();
 
-        if (panel instanceof JComponent) { // assume Swing components
-            JComponent jc = (JComponent) panel;
+        VisualNodeProvider editProvider = getNearestVisualProvider(existingNode);
 
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 1);
-            //displayNames[1] = provider.getProviderName();
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, ((JComponent) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL).getComponent()).getClientProperty(WizardDescriptor.PROP_CONTENT_DATA));
-            jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+        if (existingNode != null && (provider == null || editProvider.getClass() == provider.getClass())) {
+            currentProvider = editProvider;
+            showEditPanel = true;
+        } else {
+            currentProvider = provider;
+            showEditPanel = false;
         }
     }
 
@@ -96,20 +113,7 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
     public boolean isValid() {
         return true;
     }
-//
-//    @Override
-//    public void visualNodeChanged(DescriptiveExecutionUnit node) {
-//        isValid.set(node != null);
-//        getIterator().visualNodeChanged(node);
-//        getChangeSupport().fireChange();
-//    }
-//
-//    @Override
-//    public void handleException(Throwable e) {
-//        isValid.set(false);
-//        getIterator().handleException(e);
-//        getChangeSupport().fireChange();
-//    }
+
 
     private String validateString;
 
@@ -174,6 +178,37 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
             return clazz.getEnclosingClass() != null;
         }
         return false;
+    }
+
+    private VisualNodeProvider getNearestVisualProvider(DescriptiveExecutionUnit existingNode) {
+        if (existingNode == null) {
+            return null;
+        }
+        VisualNodeProvider nearestProvider = null;
+        int minDifference = Integer.MAX_VALUE;
+        for (VisualNodeProvider n : Lookup.getDefault().lookupAll(VisualNodeProvider.class)) {
+            int difference = getDifference(n, existingNode);
+            if (difference < minDifference) {
+                minDifference = difference;
+                nearestProvider = n;
+                if (difference == 0) {
+                    return n;
+                }
+            }
+        }
+        return nearestProvider;
+    }
+
+    private int getDifference(VisualNodeProvider n, DescriptiveExecutionUnit existingNode) {
+        String name1 = n.getClass().getPackage().getName();
+        String name2 = existingNode.getClass().getPackage().getName();
+        if (name2.length() < name1.length()) {
+            String tmp = name1;
+            name1 = name2;
+            name2 = tmp;
+        }
+        return StringUtils.difference(name1, name2).length();
+
     }
 
 }

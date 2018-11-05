@@ -24,6 +24,8 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.ai.datalab.adx.file.FileAdapter;
 import org.ai.datalab.adx.file.FilePatternParser;
+import org.ai.datalab.adx.file.File_Provider;
+import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
@@ -52,14 +54,27 @@ public class FileConnectorPanel extends VisualNodeValidator {
     private final ExecutorType type;
     private final Data sampleInput;
 
+    private final DescriptiveExecutionUnit existingUnit;
+
     private final JTextComponent contentArea;
 
-    public FileConnectorPanel(ExecutorType type, Data sampleInput) {
+    public FileConnectorPanel(DescriptiveExecutionUnit existingUnit, ExecutorType type, Data sampleInput) {
         this.type = type;
         this.sampleInput = sampleInput;
+        this.existingUnit = existingUnit;
         initComponents();
         contentArea = SimpleEditor.addVariableEditorPane(contentEditorPanel, sampleInput, null);
         jComboBox1ActionPerformed(null);
+
+        if (this.existingUnit != null && this.existingUnit instanceof FileExecutionUnit) {
+            FileExecutionUnit unit = (FileExecutionUnit) this.existingUnit;
+            File_Provider provider = (File_Provider) unit.getExecutorProvider();
+            jComboBox1.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
+            hasHeader.setSelected(provider.hasHeader());
+            quote.setSelectedItem(Quote.findQuote(provider.getQuoteString()));
+            contentArea.setText(provider.getLineFormat());
+        }
+
     }
 
     /**
@@ -331,7 +346,7 @@ public class FileConnectorPanel extends VisualNodeValidator {
             } else if (this.type == ExecutorType.WRITER) {
                 StringBuilder sb = new StringBuilder(sampleInput.getEntrySet().size() * 10);
                 for (Entry<String, Object> val : sampleInput.getEntrySet()) {
-                    if(sb.length()!=0){
+                    if (sb.length() != 0) {
                         sb.append(selectedFileType.getSplitChar());
                     }
                     sb.append(DataUtil.getVariableString(val.getKey()));
@@ -390,12 +405,12 @@ public class FileConnectorPanel extends VisualNodeValidator {
         ResourcePool<File> pool = (ResourcePool<File>) jComboBox1.getSelectedItem();
         String line = contentArea.getText();
         boolean haveHeader = this.hasHeader.isSelected();
-        
+
         Quote q = (Quote) this.quote.getSelectedItem();
         if (type == ExecutorType.READER) {
-            return new FileExecutionUnit("reading file ", FileAdapter.createReader(pool, getMapping(line), haveHeader, line, 1024,q.getQuoteString()), sampleInput);
+            return new FileExecutionUnit("reading file ", FileAdapter.createReader(pool, getMapping(line), haveHeader, line, 1024, q.getQuoteString()), sampleInput);
         } else if (type == ExecutorType.WRITER) {
-            return new FileExecutionUnit("writing to file", FileAdapter.createWriter(pool, null, haveHeader, line, 1024, q.getQuoteString(),false), sampleInput);
+            return new FileExecutionUnit("writing to file", FileAdapter.createWriter(pool, null, haveHeader, line, 1024, q.getQuoteString(), false), sampleInput);
         }
         throw new UnsupportedOperationException("");
     }
@@ -408,7 +423,7 @@ public class FileConnectorPanel extends VisualNodeValidator {
     private MappingHelper<String> getMapping(String line) throws Exception {
         MappingHelper<String> helper = new MappingHelper();
         Quote q = (Quote) this.quote.getSelectedItem();
-        FilePatternParser parser=new FilePatternParser(line, q.getQuoteString());
+        FilePatternParser parser = new FilePatternParser(line, q.getQuoteString());
         Data data = parser.parse(secondRow, null);
         StrSubstitutor substitutor = new StrSubstitutor(new StrLookup() {
             @Override
@@ -475,6 +490,20 @@ public class FileConnectorPanel extends VisualNodeValidator {
         @Override
         public String toString() {
             return displayString;
+        }
+
+        public static Quote findQuote(String s) {
+            if (!s.isEmpty()) {
+                char c = s.charAt(0);
+
+                for (Quote q : Quote.values()) {
+                    if (q != SPACE && q.getQuoteString().charAt(0) == c) {
+                        return q;
+                    }
+                }
+
+            }
+            return SPACE;
         }
 
     }

@@ -238,7 +238,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 }
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Delete", localLocation, createDeleteAction(node, localLocation)));
                 // TODO  enable only after full redesign, enabled :)
-                //popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Edit", localLocation, createEditAction(node, localLocation)));
+                popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Edit", localLocation, createEditAction(node, localLocation)));
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Properties", localLocation, SystemAction.get(PropertiesAction.class)));
 
                 return popup;
@@ -315,7 +315,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(ExecutorType.WRITER,node.getFinalOutputData());
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(ExecutorType.WRITER, node.getFinalOutputData());
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -362,7 +362,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(node.getProvidingType(), node.getFinalOutputData(), node);
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(node.getProvidingType(), node.getInputFields(), node);
                 if (visualNode != null) {
                     replaceNode(node, visualNode);
                     layoutScene();
@@ -394,7 +394,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         removeNode(node);
 
         if (visualNode.getProvidingType() == ExecutorType.READER) {
-            assert findNode(ExecutorType.READER) == null : "Reader already present";
+            assert findNode(ExecutorType.READER) == null || node.getProvidingType() == ExecutorType.READER : "Reader already present";
             GraphLayoutSupport.setTreeGraphLayoutRootNode(sceneLayout, visualNode);
         }
 
@@ -442,10 +442,10 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         DataJob job = DataJob.getJob(jobName, new Configuration());
 
         DescriptiveExecutionUnit reader = findNode(ExecutorType.READER);
-        if (reader == null) {
-            throw new UnsupportedOperationException("no reader present");
+        if (reader != null) {
+            addToJob(job, reader, null, null);
         }
-        addToJob(job, reader, null, null);
+
         return job;
     }
 
@@ -463,9 +463,9 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 }
                 break;
         }
-        
-        if(unit instanceof PropertyHandler){
-            ((PropertyHandler)unit).copyProperties(currentNode);
+
+        if (unit instanceof PropertyHandler) {
+            ((PropertyHandler) unit).copyProperties(currentNode);
         }
 
         for (FlowEdge outEdge : findNodeEdges(currentNode, true, false)) {

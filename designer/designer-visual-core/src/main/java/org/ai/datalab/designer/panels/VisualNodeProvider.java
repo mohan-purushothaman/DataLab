@@ -5,13 +5,11 @@
  */
 package org.ai.datalab.designer.panels;
 
-import java.awt.Component;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.swing.JPanel;
 import org.ai.datalab.core.Data;
-import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
+import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
  *
@@ -23,9 +21,7 @@ public abstract class VisualNodeProvider {
     
     public abstract VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput);
 
-    public VisualNodeValidator createEditPanel(ExecutionUnit unit, Data sampleInput) {
-        return createProviderPanel(unit.getProvidingType(), sampleInput);
-    }
+    public abstract VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput);
 
     public abstract String getProviderName();
 

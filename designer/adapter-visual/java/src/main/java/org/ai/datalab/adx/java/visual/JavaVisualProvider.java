@@ -17,6 +17,7 @@ import org.ai.datalab.core.Data;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
+import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
  *
@@ -29,6 +30,11 @@ public class JavaVisualProvider extends VisualNodeProvider {
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
 
         return new JavaConnectorPanel(getGenerator(type), type, sampleInput);
+    }
+    
+    @Override
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -54,5 +60,7 @@ public class JavaVisualProvider extends VisualNodeProvider {
         }
         throw new UnsupportedOperationException(type + " not available");
     }
+
+    
 
 }

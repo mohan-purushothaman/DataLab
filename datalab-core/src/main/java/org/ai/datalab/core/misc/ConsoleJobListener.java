@@ -39,7 +39,7 @@ public class ConsoleJobListener implements DataLabJobListener {
     }
 
     @Override
-    public void updateProgress(ExecutionUnit primitive,int threadNo, ExecutionResult result) {
+    public void updateProgress(ExecutionUnit primitive,int threadNo, ExecutionResult result,Data... data) {
         System.out.println(primitive + "("+threadNo+") progressed " + result.getProcessedCount()+" and generated "+result.getOutputCount()+" in "+result.getProcessedNanoSeconds());
     }
 

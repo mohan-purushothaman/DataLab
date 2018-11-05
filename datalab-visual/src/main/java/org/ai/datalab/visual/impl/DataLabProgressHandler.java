@@ -8,6 +8,7 @@ package org.ai.datalab.visual.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,6 +24,7 @@ import org.ai.datalab.visual.DataLabVisualUtil;
 import org.ai.datalab.visual.GraphUtil;
 import org.ai.datalab.visual.impl.widget.DataJobConnectionWidget;
 import org.ai.datalab.visual.impl.widget.DataJobProgressWidget;
+import org.ai.datalab.visual.impl.widget.misc.DataDisplayer;
 import org.ai.datalab.visual.impl.widget.misc.SwingUpdater;
 
 /**
@@ -48,6 +50,11 @@ public class DataLabProgressHandler extends SwingUpdater<Void> {
 
     private final ExecutionUnit unit;
 
+    private final List<DataDisplayer> progressListeners=new LinkedList<>();
+    
+    
+    
+    
     public DataLabProgressHandler(DataLabListenerGraph scene, ExecutionUnit unit) {
         this.scene = scene;
         this.unit = unit;
@@ -104,9 +111,14 @@ public class DataLabProgressHandler extends SwingUpdater<Void> {
         publish(null);
         //executorService.shutdown();
     }
+    
+    
 
-    public void updateProgress(ExecutionResult executionResult) {
+    public void updateProgress(ExecutionResult executionResult,Data... outputData) {
          result.update(executionResult);
+         for (DataDisplayer d : progressListeners) {
+            d.addData(outputData);
+        }
          publish(null);
     }
 
@@ -180,5 +192,9 @@ public class DataLabProgressHandler extends SwingUpdater<Void> {
         
         return min+" m "+(sec%60)+" s"; 
         
+    }
+
+    public void addProgressListener(DataDisplayer dataDisplayer) {
+        progressListeners.add(dataDisplayer);
     }
 }

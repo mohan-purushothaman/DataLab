@@ -13,6 +13,6 @@ import org.ai.datalab.core.Data;
  * @author Mohan Purushothaman
  */
 public interface DataDisplayer {
-    public void addData(Data data);
     public void addData(Collection<Data> data);
+    public void addData(Data... data);
 }

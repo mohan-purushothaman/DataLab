@@ -11,15 +11,15 @@ import org.openide.util.Lookup;
  *
  * @author Mohan Purushothaman
  */
-public interface DataDisplayerCreater {
+public interface DataDisplayerCreator {
 
     public DataDisplayer displayData(String tabName);
 
     public static DataDisplayer getDataDisplayer(String tabName) {
-        DataDisplayerCreater lookup = Lookup.getDefault().lookup(DataDisplayerCreater.class);
+        DataDisplayerCreator lookup = Lookup.getDefault().lookup(DataDisplayerCreator.class);
 
         if (lookup == null) {
-            lookup = new DataDisplayerCreater() {
+            lookup = new DataDisplayerCreator() {
                 @Override
                 public DataDisplayer displayData(String tabName) {
                     SimpleDataDisplayer simpleDataDisplayer = new SimpleDataDisplayer();

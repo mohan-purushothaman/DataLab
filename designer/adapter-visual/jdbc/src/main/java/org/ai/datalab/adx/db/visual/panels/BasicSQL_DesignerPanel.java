@@ -5,18 +5,20 @@
  */
 package org.ai.datalab.adx.db.visual.panels;
 
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.ComboBoxModel;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.util.Exceptions;
 import org.ai.datalab.adx.db.DB_Adapter;
 import org.ai.datalab.adx.db.DB_Processor;
-import org.ai.datalab.adx.db.PreparedQuery;
+import org.ai.datalab.adx.db.DB_Provider;
 import org.ai.datalab.adx.db.visual.DbExecutionUnit;
 import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
@@ -27,7 +29,6 @@ import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
-import org.ai.datalab.designer.VariableHighlighterListener;
 import org.ai.datalab.designer.editor.SimpleEditor;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.util.ResourceVisualUtil;
@@ -45,29 +46,38 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
      */
     private final ExecutorType type;
     private final Data sampleInput;
+
+    private final DescriptiveExecutionUnit existingUnit;
     private final JTextComponent textArea;
 
-    public BasicSQL_DesignerPanel(ExecutorType type, Data sampleInput) {
+    public BasicSQL_DesignerPanel(DescriptiveExecutionUnit existingUnit, ExecutorType type, Data sampleInput) {
         this.type = type;
         this.sampleInput = sampleInput;
+        this.existingUnit = existingUnit;
         initComponents();
-        textArea = SimpleEditor.addVariableEditorPane(editorPanel, sampleInput, new VariableHighlighterListener() {
+        textArea = SimpleEditor.addVariableEditorPane(editorPanel, sampleInput, new TextListener() {
             @Override
-            public void variableHighlighted(String variable) {
-//                EventQueue.invokeLater(() -> {
-//                     System.out.println(variable + " highlighed");
-//                });
-
+            public void textValueChanged(TextEvent e) {
+                Document d = (Document) e.getSource();
+                try {
+                    replacedQuery.setText(DataUtil.substituteData(d.getText(0, d.getLength()), sampleInput));
+                } catch (Exception ex) {
+                    replacedQuery.setText("Exception occured : " + ex);
+                }
             }
-
-            @Override
-            public void reset() {
-//                 EventQueue.invokeLater(() -> {
-//                     System.out.println("resetted");
-//                });
-            }
-
         });
+
+        if (type == ExecutorType.READER) {
+            jScrollPane1.setVisible(false);
+        }
+
+        if (this.existingUnit != null && this.existingUnit instanceof DbExecutionUnit) {
+            DbExecutionUnit unit=(DbExecutionUnit) this.existingUnit;
+            DB_Provider provider=(DB_Provider) unit.getExecutorProvider();
+            resourcePools.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
+            textArea.setText(provider.getQuery());
+        }
+
     }
 
     /**
@@ -84,6 +94,8 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
         resourcePools = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         editorPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        replacedQuery = new javax.swing.JTextArea();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(BasicSQL_DesignerPanel.class, "BasicSQL_DesignerPanel.jLabel1.text")); // NOI18N
 
@@ -130,18 +142,24 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
         );
         editorPanelLayout.setVerticalGroup(
             editorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 427, Short.MAX_VALUE)
+            .addGap(0, 283, Short.MAX_VALUE)
         );
+
+        replacedQuery.setEditable(false);
+        replacedQuery.setColumns(20);
+        replacedQuery.setRows(5);
+        jScrollPane1.setViewportView(replacedQuery);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(editorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(editorPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -151,6 +169,8 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(editorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -166,6 +186,8 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea replacedQuery;
     private javax.swing.JComboBox<ResourcePool<Connection>> resourcePools;
     // End of variables declaration//GEN-END:variables
 
