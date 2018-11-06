@@ -9,7 +9,10 @@ import com.thoughtworks.xstream.XStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -94,6 +97,22 @@ public class ResourceStore {
     public static Collection<ResourcePool> getResourceList() {
         return ResourceFactory.getResourceList();
     }
+    
+    public static Collection<ResourcePool> getSortedResourceList(Comparator<ResourcePool> c) {
+        if(c==null){
+            c=new Comparator<ResourcePool>() {
+                @Override
+                public int compare(ResourcePool o1, ResourcePool o2) {
+                    return o1.getResourceId().compareToIgnoreCase(o2.getResourceId());
+                }
+            };
+        }
+        ArrayList<ResourcePool> list = new ArrayList<>(getResourceList());
+        Collections.sort(list,c);
+        
+        return list;
+    }
+    
     
     public static <V> Collection<ResourcePool> findResourcePools(Class<V> expectedResourceClazz, ResourcePoolQualifier<V> qualifier) {
         return ResourceFactory.findResourcePools(expectedResourceClazz, qualifier);

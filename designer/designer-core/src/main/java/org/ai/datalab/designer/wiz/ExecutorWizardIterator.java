@@ -43,7 +43,7 @@ public class ExecutorWizardIterator implements WizardDescriptor.ProgressInstanti
         this.type = type;
         this.sampleInput = (sampleInput == null ? new SimpleData() : sampleInput);
         this.existingNode = existingNode;
-        currentPanel = TYPE_FILTER_PANEL;
+        currentPanel = existingNode==null?TYPE_FILTER_PANEL:INPUT_PANEL;
         initPanel();
     }
 
@@ -111,32 +111,33 @@ public class ExecutorWizardIterator implements WizardDescriptor.ProgressInstanti
     }
 
     private Map<WIZARD_PANEL, WizardDescriptor.Panel<WizardDescriptor>> panelWizard = null;
+    
+    private String[] propContent;
 
     private void initPanel() {
         if (panelWizard == null) {
             panelWizard = new EnumMap<>(WIZARD_PANEL.class);
-            String[] s = new String[WIZARD_PANEL.values().length];
+            propContent = new String[WIZARD_PANEL.values().length];
 
             int i = 0;
 
             for (WIZARD_PANEL w : WIZARD_PANEL.values()) {
                 WizardDescriptor.Panel<WizardDescriptor> p = loadPanel(w, this);
                 panelWizard.put(w, p);
-                s[i] = w.getName();
-
-                JComponent jc = (JComponent) p.getComponent();
-                if (jc != null) {
-                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i);
-                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, s);
-                    jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
-                }
+                propContent[i] = w.getName();
                 i++;
             }
 
         }
     }
+
+    public String[] getPropContent() {
+        return propContent;
+    }
+    
+    
+    
+    
 
     public final WizardDescriptor.Panel<WizardDescriptor> getPanel(WIZARD_PANEL wizardPanel) {
         return panelWizard.get(wizardPanel);

@@ -58,21 +58,28 @@ public class FileConnectorPanel extends VisualNodeValidator {
 
     private final JTextComponent contentArea;
 
+    private boolean canProcessEvents = true;
+
     public FileConnectorPanel(DescriptiveExecutionUnit existingUnit, ExecutorType type, Data sampleInput) {
         this.type = type;
         this.sampleInput = sampleInput;
         this.existingUnit = existingUnit;
         initComponents();
         contentArea = SimpleEditor.addVariableEditorPane(contentEditorPanel, sampleInput, null);
-        jComboBox1ActionPerformed(null);
 
         if (this.existingUnit != null && this.existingUnit instanceof FileExecutionUnit) {
+            canProcessEvents = false;
             FileExecutionUnit unit = (FileExecutionUnit) this.existingUnit;
             File_Provider provider = (File_Provider) unit.getExecutorProvider();
-            jComboBox1.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
+            ResourcePool<File> pool=ResourceStore.getResourcePool(provider.getResourceID());
+            jComboBox1.setSelectedItem(pool);
             hasHeader.setSelected(provider.hasHeader());
             quote.setSelectedItem(Quote.findQuote(provider.getQuoteString()));
             contentArea.setText(provider.getLineFormat());
+            loadFileLines(pool);
+            canProcessEvents = true;
+        } else {
+            jComboBox1ActionPerformed(null);
         }
 
     }
@@ -268,7 +275,7 @@ public class FileConnectorPanel extends VisualNodeValidator {
     private String lastSelectedFile;
 
     private void update(ResourcePool pool) {
-        if (pool != null) {
+        if (pool != null && canProcessEvents) {
             try (Resource<File> r = pool.getResource()) {
                 if (!r.get().getPath().equals(lastSelectedFile)) {
                     if (type == ExecutorType.READER) {
@@ -276,7 +283,23 @@ public class FileConnectorPanel extends VisualNodeValidator {
 
                             @Override
                             public void run() {
-                                try (Resource<File> r = pool.getResource()) {
+                                loadFileLines(pool);
+                            }
+                        }).start();
+                    } else if (type == ExecutorType.WRITER) {
+                        updateOutput();
+                    }
+                }
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+    
+    
+    
+    private final void loadFileLines(ResourcePool<File> pool){
+        try (Resource<File> r = pool.getResource()) {
                                     File f = r.get();
                                     lastSelectedFile = f.getPath();
                                     try (FileInputStream fio = new FileInputStream(f)) {
@@ -293,17 +316,8 @@ public class FileConnectorPanel extends VisualNodeValidator {
                                 } catch (Exception ex) {
                                     Exceptions.printStackTrace(ex);
                                 }
-                            }
-                        }).start();
-                    } else if (type == ExecutorType.WRITER) {
-                        updateOutput();
-                    }
-                }
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
     }
+    
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         ResourcePool<File> pool = (ResourcePool<File>) jComboBox1.getSelectedItem();
@@ -312,49 +326,51 @@ public class FileConnectorPanel extends VisualNodeValidator {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     public void updateOutput() {
-        try {
-            boolean haveHeader = this.hasHeader.isSelected();
-            FileType selectedFileType = (FileType) fileType.getSelectedItem();
-            if (selectedFileType == null) {
-                selectedFileType = FileType.MANUAL;
-            }
-
-            Quote q = (Quote) this.quote.getSelectedItem();
-            if (this.type == ExecutorType.READER && selectedFileType != FileType.MANUAL) {
-                String line = haveHeader ? secondRow : firstRow;
-
-                if (line == null || line.isEmpty()) {
-                    throw new Exception("input line is empty, can't parse");
+        if (canProcessEvents) {
+            try {
+                boolean haveHeader = this.hasHeader.isSelected();
+                FileType selectedFileType = (FileType) fileType.getSelectedItem();
+                if (selectedFileType == null) {
+                    selectedFileType = FileType.MANUAL;
                 }
 
-                StrTokenizer header = new StrTokenizer();
+                Quote q = (Quote) this.quote.getSelectedItem();
+                if (this.type == ExecutorType.READER && selectedFileType != FileType.MANUAL) {
+                    String line = haveHeader ? secondRow : firstRow;
 
-                if (haveHeader) {
-                    header = tokenizer(firstRow, selectedFileType.getSplitChar(), q.getQuoteString());
-                }
-                StringBuilder sb = new StringBuilder(line.length() * 3 / 2);
-                int i = 0;
-                for (String s : tokenizer(line, selectedFileType.getSplitChar(), q.getQuoteString()).getTokenArray()) {
-                    String normalizeFieldKey = DataUtil.normalizeFieldKey(haveHeader && header.hasNext() ? header.nextToken() : "FIELD_" + i, sampleInput);
-                    if (i != 0) {
-                        sb.append(selectedFileType.getSplitChar());
+                    if (line == null || line.isEmpty()) {
+                        throw new Exception("input line is empty, can't parse");
                     }
-                    sb.append(DataUtil.getVariableString(normalizeFieldKey));
-                    i++;
-                }
-                contentArea.setText(sb.toString());
-            } else if (this.type == ExecutorType.WRITER) {
-                StringBuilder sb = new StringBuilder(sampleInput.getEntrySet().size() * 10);
-                for (Entry<String, Object> val : sampleInput.getEntrySet()) {
-                    if (sb.length() != 0) {
-                        sb.append(selectedFileType.getSplitChar());
+
+                    StrTokenizer header = new StrTokenizer();
+
+                    if (haveHeader) {
+                        header = tokenizer(firstRow, selectedFileType.getSplitChar(), q.getQuoteString());
                     }
-                    sb.append(DataUtil.getVariableString(val.getKey()));
+                    StringBuilder sb = new StringBuilder(line.length() * 3 / 2);
+                    int i = 0;
+                    for (String s : tokenizer(line, selectedFileType.getSplitChar(), q.getQuoteString()).getTokenArray()) {
+                        String normalizeFieldKey = DataUtil.normalizeFieldKey(haveHeader && header.hasNext() ? header.nextToken() : "FIELD_" + i, sampleInput);
+                        if (i != 0) {
+                            sb.append(selectedFileType.getSplitChar());
+                        }
+                        sb.append(DataUtil.getVariableString(normalizeFieldKey));
+                        i++;
+                    }
+                    contentArea.setText(sb.toString());
+                } else if (this.type == ExecutorType.WRITER) {
+                    StringBuilder sb = new StringBuilder(sampleInput.getEntrySet().size() * 10);
+                    for (Entry<String, Object> val : sampleInput.getEntrySet()) {
+                        if (sb.length() != 0) {
+                            sb.append(selectedFileType.getSplitChar());
+                        }
+                        sb.append(DataUtil.getVariableString(val.getKey()));
+                    }
+                    contentArea.setText(sb.toString());
                 }
-                contentArea.setText(sb.toString());
+            } catch (Exception e) {
+                Exceptions.printStackTrace(e);
             }
-        } catch (Exception e) {
-            Exceptions.printStackTrace(e);
         }
     }
 

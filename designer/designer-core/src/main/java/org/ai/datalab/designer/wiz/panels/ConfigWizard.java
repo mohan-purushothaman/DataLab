@@ -17,16 +17,27 @@ import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
  */
 public class ConfigWizard extends WizardPanel implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    private final ConfigVisualPanel configVisualPanel;
+    private ConfigVisualPanel configVisualPanel;
 
     public ConfigWizard(ExecutorWizardIterator iterator) {
         super(iterator);
-        this.configVisualPanel = new ConfigVisualPanel(iterator);
+
     }
 
     @Override
     public Component getComponent() {
-        update();
+
+        if (configVisualPanel == null) {
+            configVisualPanel = new ConfigVisualPanel(getIterator());
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+        }
+
+        configVisualPanel.update(getIterator());
+
         return configVisualPanel;
     }
 
@@ -45,10 +56,6 @@ public class ConfigWizard extends WizardPanel implements WizardDescriptor.Panel<
 
     }
 
-    public void update(){
-        configVisualPanel.update(getIterator());
-    }
-    
     @Override
     public boolean isValid() {
         return true;

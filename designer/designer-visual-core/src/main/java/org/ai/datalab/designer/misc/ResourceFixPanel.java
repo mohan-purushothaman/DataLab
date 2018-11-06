@@ -10,9 +10,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.resource.ResourcePool;
@@ -104,7 +107,6 @@ public class ResourceFixPanel extends javax.swing.JPanel {
             @Override
             public void run() {
                 boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
-                updateTableModel(jTable1);
             }
         }).start();
 
@@ -172,14 +174,41 @@ public class ResourceFixPanel extends javax.swing.JPanel {
 
         });
 
-        updateTableModel(table);
+        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox(new ComboBoxModel() {
+            
+            
+            @Override
+            public void setSelectedItem(Object anItem) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
 
+            @Override
+            public Object getSelectedItem() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public int getSize() {
+                
+            }
+
+            @Override
+            public Object getElementAt(int index) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            protected EventListenerList listenerList = new EventListenerList();
+
+            public void addListDataListener(ListDataListener l) {
+                listenerList.add(ListDataListener.class, l);
+            }
+
+            public void removeListDataListener(ListDataListener l) {
+                listenerList.remove(ListDataListener.class, l);
+            }
+
+        })));
         return table;
-    }
-
-    public void updateTableModel(JTable table) {
-
-        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox(getResources())));
     }
 
     private Object[] getResources() {

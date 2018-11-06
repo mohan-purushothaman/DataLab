@@ -33,7 +33,7 @@ import org.openide.util.Lookup;
  */
 public class InputWizard extends WizardPanel implements WizardDescriptor.ExtendedAsynchronousValidatingPanel<WizardDescriptor> {
 
-    private VisualNodeValidator panel;
+    private JPanel fullPanel;
 
     private JPanel progressPanel;
 
@@ -47,33 +47,39 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
 
     @Override
     public Component getComponent() {
-        if (currentProvider == null) {
-            return null;
-        }
         ExecutorWizardIterator iterator = getIterator();
+        if (currentProvider == null) {
+
+            if (iterator.getExistingNode() != null) {
+                setProvider(null);
+            } else {
+                return null;
+            }
+        }
+        if (fullPanel != null) {
+            return fullPanel;
+        }
+        VisualNodeValidator panel;
         if (showEditPanel) {
-            this.panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput());
+            panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput());
         } else {
-            this.panel = currentProvider.createProviderPanel(((TypeFilterWizard) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL)).getExecutorType(), iterator.getSampleInput());
+            panel = currentProvider.createProviderPanel(((TypeFilterWizard) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL)).getExecutorType(), iterator.getSampleInput());
         }
 
-        if (panel instanceof JComponent) { // assume Swing components
-            JComponent jc = (JComponent) panel;
-
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 1);
-            //displayNames[1] = provider.getProviderName();
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, ((JComponent) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL).getComponent()).getClientProperty(WizardDescriptor.PROP_CONTENT_DATA));
-            jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-            jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
-        }
-
-        JPanel fullPanel = new JPanel(new BorderLayout());
+        fullPanel = new JPanel(new BorderLayout());
         fullPanel.add(panel, BorderLayout.CENTER);
         progressPanel = new JPanel(new BorderLayout(20, 0));
         progressPanel.setVisible(false);
 
         fullPanel.add(progressPanel, BorderLayout.SOUTH);
+
+        fullPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 1);
+        //displayNames[1] = provider.getProviderName();
+        fullPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, iterator.getPropContent());
+        fullPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+        fullPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+        fullPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+
         return fullPanel;
     }
 
@@ -92,6 +98,7 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
             currentProvider = provider;
             showEditPanel = false;
         }
+        fullPanel = null;
     }
 
     @Override
@@ -114,12 +121,20 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
         return true;
     }
 
-
     private String validateString;
+
+    private VisualNodeValidator getPanel() {
+        for (Component c : fullPanel.getComponents()) {
+            if (c instanceof VisualNodeValidator) {
+                return (VisualNodeValidator) c;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void prepareValidation() {
-        validateString = panel.prepareValidation();
+        validateString = getPanel().prepareValidation();
     }
 
     @Override
@@ -148,19 +163,19 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
         progressPanel.setVisible(true);
         handle.start();
         try {
-            DescriptiveExecutionUnit connector = panel.validateConnector(handle);
+            DescriptiveExecutionUnit connector = getPanel().validateConnector(handle);
 
             if (isInnerClass(connector)) {
-                throw new WizardValidationException(panel, "inner class not supported", "inner class not supported");
+                throw new WizardValidationException(getPanel(), "inner class not supported", "inner class not supported");
             }
             getIterator().setSelectedNode(connector);
             if (connector == null) {
-                throw new WizardValidationException(panel, "details missing", "details missing");
+                throw new WizardValidationException(getPanel(), "details missing", "details missing");
             }
         } catch (Exception ex) {
             Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.WARNING));
             getIterator().setSelectedNode(null);
-            throw new WizardValidationException(panel, ex.getMessage(), ex.getLocalizedMessage());
+            throw new WizardValidationException(getPanel(), ex.getMessage(), ex.getLocalizedMessage());
         } finally {
             handle.finish();
         }
@@ -168,7 +183,7 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
 
     @Override
     public void finishValidation() {
-        panel.finishValidation();
+        getPanel().finishValidation();
     }
 
     private boolean isInnerClass(DescriptiveExecutionUnit connector) {

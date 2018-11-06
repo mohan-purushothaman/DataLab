@@ -6,6 +6,7 @@
 package org.ai.datalab.designer.wiz.panels;
 
 import java.awt.Component;
+import javax.swing.JComponent;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.ai.datalab.core.executor.ExecutorType;
@@ -18,15 +19,23 @@ import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
  */
 public class TypeFilterWizard extends WizardPanel implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    private final TypeFilterVisualPanel typeFilterVisualPanel;
+    private TypeFilterVisualPanel typeFilterVisualPanel;
 
     public TypeFilterWizard(ExecutorWizardIterator iterator) {
         super(iterator);
-        typeFilterVisualPanel = new TypeFilterVisualPanel(iterator);
+
     }
 
     @Override
     public Component getComponent() {
+        if (typeFilterVisualPanel == null) {
+            typeFilterVisualPanel = new TypeFilterVisualPanel(getIterator());
+            typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
+            typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
+            typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+            typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+            typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+        }
         return typeFilterVisualPanel;
     }
 
@@ -54,8 +63,8 @@ public class TypeFilterWizard extends WizardPanel implements WizardDescriptor.Pa
     public VisualNodeProvider getSelectedConnector() {
         return typeFilterVisualPanel.getSelectedConnector();
     }
-    
-    public ExecutorType getExecutorType(){
+
+    public ExecutorType getExecutorType() {
         return typeFilterVisualPanel.getExecutorType();
     }
 

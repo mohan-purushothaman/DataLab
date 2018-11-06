@@ -16,15 +16,25 @@ import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
  */
 public class OutputWizard extends WizardPanel implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    public final OutputVisualPanel outputVisualPanel;
+    public OutputVisualPanel outputVisualPanel;
 
     public OutputWizard(ExecutorWizardIterator iterator) {
         super(iterator);
-        this.outputVisualPanel = new OutputVisualPanel(iterator);
     }
 
     @Override
     public Component getComponent() {
+        
+        if(outputVisualPanel==null){
+            outputVisualPanel = new OutputVisualPanel(getIterator());
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
+        }
+        
+        
         outputVisualPanel.refresh();
         return outputVisualPanel;
     }
