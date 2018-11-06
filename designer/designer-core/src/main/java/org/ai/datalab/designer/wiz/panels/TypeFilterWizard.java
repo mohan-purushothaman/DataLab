@@ -5,11 +5,8 @@
  */
 package org.ai.datalab.designer.wiz.panels;
 
-import java.awt.Component;
-import javax.swing.JComponent;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
-import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
 
@@ -27,7 +24,7 @@ public class TypeFilterWizard extends WizardPanel implements WizardDescriptor.Pa
     }
 
     @Override
-    public Component getComponent() {
+    public TypeFilterVisualPanel getComponent() {
         if (typeFilterVisualPanel == null) {
             typeFilterVisualPanel = new TypeFilterVisualPanel(getIterator());
             typeFilterVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
@@ -61,11 +58,7 @@ public class TypeFilterWizard extends WizardPanel implements WizardDescriptor.Pa
     }
 
     public VisualNodeProvider getSelectedConnector() {
-        return typeFilterVisualPanel.getSelectedConnector();
-    }
-
-    public ExecutorType getExecutorType() {
-        return typeFilterVisualPanel.getExecutorType();
+        return getComponent().getSelectedConnector();
     }
 
 }

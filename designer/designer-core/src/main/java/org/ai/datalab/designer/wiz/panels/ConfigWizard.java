@@ -29,7 +29,7 @@ public class ConfigWizard extends WizardPanel implements WizardDescriptor.Panel<
 
         if (configVisualPanel == null) {
             configVisualPanel = new ConfigVisualPanel(getIterator());
-            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
+            configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 3);
             configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
             configVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
             configVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);

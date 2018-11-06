@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.designer.resource;
 
+import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
 import javax.swing.ListModel;
@@ -40,6 +41,7 @@ final class ResourcesPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         resourceList = new javax.swing.JList<>();
+        delete = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         id = new javax.swing.JTextField();
@@ -66,6 +68,14 @@ final class ResourcesPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(resourceList);
 
+        org.openide.awt.Mnemonics.setLocalizedText(delete, org.openide.util.NbBundle.getMessage(ResourcesPanel.class, "ResourcesPanel.delete.text")); // NOI18N
+        delete.setEnabled(true);
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -75,6 +85,8 @@ final class ResourcesPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(delete)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
@@ -85,7 +97,9 @@ final class ResourcesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(delete))
                 .addContainerGap())
         );
 
@@ -210,6 +224,7 @@ final class ResourcesPanel extends javax.swing.JPanel {
             maxAllowed.setValue(r.getMaxCount());
             resourceClass.setText(r.getResourceClass().getName());
         }
+        delete.setEnabled(!resourceList.isSelectionEmpty());
     }//GEN-LAST:event_resourceListValueChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -227,6 +242,16 @@ final class ResourcesPanel extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+        for (ResourcePool r : resourceList.getSelectedValuesList()) {
+            try {
+                ResourceStore.deleteResourcePool(r);
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }//GEN-LAST:event_deleteActionPerformed
 
     private ListModel<ResourcePool> getModel() {
         return new AbstractListModel<ResourcePool>() {
@@ -265,6 +290,7 @@ final class ResourcesPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton delete;
     private javax.swing.JTextField id;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

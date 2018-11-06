@@ -63,7 +63,7 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
         if (showEditPanel) {
             panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput());
         } else {
-            panel = currentProvider.createProviderPanel(((TypeFilterWizard) iterator.getPanel(WIZARD_PANEL.TYPE_FILTER_PANEL)).getExecutorType(), iterator.getSampleInput());
+            panel = currentProvider.createProviderPanel(getIterator().getType(), iterator.getSampleInput());
         }
 
         fullPanel = new JPanel(new BorderLayout());

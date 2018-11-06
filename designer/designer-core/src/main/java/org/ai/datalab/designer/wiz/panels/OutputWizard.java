@@ -27,7 +27,7 @@ public class OutputWizard extends WizardPanel implements WizardDescriptor.Panel<
         
         if(outputVisualPanel==null){
             outputVisualPanel = new OutputVisualPanel(getIterator());
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 0);
+            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 2);
             outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
             outputVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
             outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);

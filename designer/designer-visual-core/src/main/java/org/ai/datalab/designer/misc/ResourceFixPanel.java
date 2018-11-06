@@ -5,16 +5,20 @@
  */
 package org.ai.datalab.designer.misc;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.event.EventListenerList;
+import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;
 import org.ai.datalab.core.DataJob;
@@ -107,6 +111,8 @@ public class ResourceFixPanel extends javax.swing.JPanel {
             @Override
             public void run() {
                 boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
+                cache.set(null);
+                updateTableEditor(jTable1);
             }
         }).start();
 
@@ -174,50 +180,18 @@ public class ResourceFixPanel extends javax.swing.JPanel {
 
         });
 
-        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox(new ComboBoxModel() {
-            
-            
-            @Override
-            public void setSelectedItem(Object anItem) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public Object getSelectedItem() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public int getSize() {
-                
-            }
-
-            @Override
-            public Object getElementAt(int index) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            protected EventListenerList listenerList = new EventListenerList();
-
-            public void addListDataListener(ListDataListener l) {
-                listenerList.add(ListDataListener.class, l);
-            }
-
-            public void removeListDataListener(ListDataListener l) {
-                listenerList.remove(ListDataListener.class, l);
-            }
-
-        })));
+        updateTableEditor(table);
         return table;
     }
 
-    private Object[] getResources() {
-        List<String> l = new LinkedList<>();
-        for (ResourcePool o : ResourceStore.getResourceList()) {
-            l.add(o.getResourceId());
+    private List<ResourcePool> getList() {
+        if (cache.get() == null) {
+            cache.set(ResourceStore.getSortedResourceList(null));
         }
-        return l.toArray();
+        return cache.get();
     }
+
+    private AtomicReference<List<ResourcePool>> cache=new AtomicReference<>();
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -227,4 +201,60 @@ public class ResourceFixPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    private void updateTableEditor(JTable table) {
+        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JComboBox(new ComboBoxModel() {
+
+            Object selectedObject;
+
+            @Override
+            public void setSelectedItem(Object anObject) {
+                if ((selectedObject != null && !selectedObject.equals(anObject))
+                        || selectedObject == null && anObject != null) {
+                    selectedObject = anObject;
+                    for (ListDataListener l : listenerList) {
+                        l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, -1, -1));
+                    }
+                }
+            }
+
+            @Override
+            public Object getSelectedItem() {
+
+                if (selectedObject == null) {
+                    List<ResourcePool> list = getList();
+
+                    if (!list.isEmpty()) {
+                        return list.get(0);
+                    }
+
+                }
+
+                return selectedObject;
+            }
+
+            @Override
+            public int getSize() {
+                return getList().size();
+            }
+
+            @Override
+            public Object getElementAt(int index) {
+                return ((ResourcePool) getList().get(index)).getResourceId();
+            }
+
+            protected List<ListDataListener> listenerList = new LinkedList<>();
+
+            @Override
+            public void addListDataListener(ListDataListener l) {
+                listenerList.add(l);
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l) {
+                listenerList.remove(l);
+            }
+
+        })));
+    }
 }
