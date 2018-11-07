@@ -10,16 +10,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import javax.swing.AbstractAction;
-import javax.swing.text.DefaultEditorKit;
-import org.netbeans.api.visual.widget.Scene;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
-import org.openide.util.datatransfer.ExClipboard;
-import org.openide.util.lookup.Lookups;
-import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 import org.ai.datalab.visual.impl.widget.DescriptiveAbstractNode;
 

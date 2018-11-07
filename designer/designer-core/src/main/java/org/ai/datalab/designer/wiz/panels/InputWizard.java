@@ -139,45 +139,50 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
 
     @Override
     public void validate() throws WizardValidationException {
-        Thread validateThread = Thread.currentThread();
-
-        ProgressHandle handle = ProgressHandle.createHandle(validateString, new Cancellable() {
-            @Override
-            public boolean cancel() {
-                validateThread.interrupt();
-                return true;
-            }
-        });
-
-        JComponent p = ProgressHandleFactory.createProgressComponent(handle);
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                validateThread.interrupt();
-            }
-        });
-        progressPanel.add(ProgressHandleFactory.createMainLabelComponent(handle), BorderLayout.WEST);
-        progressPanel.add(p, BorderLayout.CENTER);
-        progressPanel.add(cancelButton, BorderLayout.EAST);
-        progressPanel.setVisible(true);
-        handle.start();
         try {
-            DescriptiveExecutionUnit connector = getPanel().validateConnector(handle);
+            Thread validateThread = Thread.currentThread();
 
-            if (isInnerClass(connector)) {
-                throw new WizardValidationException(getPanel(), "inner class not supported", "inner class not supported");
+            ProgressHandle handle = ProgressHandle.createHandle(validateString, new Cancellable() {
+                @Override
+                public boolean cancel() {
+                    validateThread.interrupt();
+                    return true;
+                }
+            });
+
+            JComponent p = ProgressHandleFactory.createProgressComponent(handle);
+            JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    validateThread.interrupt();
+                }
+            });
+            progressPanel.add(ProgressHandleFactory.createMainLabelComponent(handle), BorderLayout.WEST);
+            progressPanel.add(p, BorderLayout.CENTER);
+            progressPanel.add(cancelButton, BorderLayout.EAST);
+            progressPanel.setVisible(true);
+            handle.start();
+            try {
+                DescriptiveExecutionUnit connector = getPanel().validateConnector(handle);
+
+                if (isInnerClass(connector)) {
+                    throw new WizardValidationException(getPanel(), "inner class not supported", "inner class not supported");
+                }
+                getIterator().setSelectedNode(connector);
+                if (connector == null) {
+                    throw new WizardValidationException(getPanel(), "details missing", "details missing");
+                }
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.WARNING));
+                getIterator().setSelectedNode(null);
+                throw new WizardValidationException(getPanel(), ex.getMessage(), ex.getLocalizedMessage());
+            } finally {
+                handle.finish();
             }
-            getIterator().setSelectedNode(connector);
-            if (connector == null) {
-                throw new WizardValidationException(getPanel(), "details missing", "details missing");
-            }
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.WARNING));
-            getIterator().setSelectedNode(null);
-            throw new WizardValidationException(getPanel(), ex.getMessage(), ex.getLocalizedMessage());
         } finally {
-            handle.finish();
+            progressPanel.removeAll();
+            progressPanel.setVisible(false);
         }
     }
 

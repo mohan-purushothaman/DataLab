@@ -7,8 +7,6 @@ package org.ai.datalab.designer.wiz.panels.misc;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
-import org.openide.WizardDescriptor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
@@ -16,12 +14,12 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.SingleMapping;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.openide.WizardDescriptor;
 
 /**
  *
@@ -35,13 +33,21 @@ public class DataVisualView extends javax.swing.JPanel implements ExplorerManage
     private final ExplorerManager manager;
 
     private final ExecutorWizardIterator iterator;
+    
+    private DescriptiveExecutionUnit unit;
+    
+    private final boolean readOnly;
 
-    public DataVisualView(ExecutorWizardIterator iterator, String rootText) {
+    public DataVisualView(ExecutorWizardIterator iterator, String rootText,boolean readOnly) {
         manager = new ExplorerManager();
+        this.readOnly=readOnly;
         this.iterator = iterator;
         this.rootText = rootText;
         initComponents();
-        refresh();
+    }
+    
+    public DataVisualView(ExecutorWizardIterator iterator, String rootText){
+        this(iterator, rootText, false);
     }
 
     /**
@@ -76,9 +82,17 @@ public class DataVisualView extends javax.swing.JPanel implements ExplorerManage
     private BeanTreeView view;
     private String rootText;
 
+    
     public final void setDataFields(MappingHelper mapping) {
         setDataFields(rootText, mapping);
     }
+
+    public DescriptiveExecutionUnit getUnit() {
+        return unit;
+    }
+    
+    
+    
 
     public final void setDataFields(final String rootText, MappingHelper mapping) {
         init();
@@ -120,21 +134,14 @@ public class DataVisualView extends javax.swing.JPanel implements ExplorerManage
             @Override
             protected Node createNodeForKey(SingleMapping entry) {
 
-                iterator.getSelectedNode().getMapping();
-
-                DataNode node = new DataNode(DataVisualView.this, entry);
+                DataNode node = new DataNode(DataVisualView.this, entry,readOnly);
                 return node;
             }
 
             @Override
             protected boolean createKeys(List<SingleMapping> list) {
-                Comparator albhaOrder = new Comparator<SingleMapping>() {
-                    @Override
-                    public int compare(SingleMapping o1, SingleMapping o2) {
-                        return o1.getFieldKey().compareTo(o2.getFieldKey());
-                    }
-                };
-                for (Object entry : mapping.getIdList(albhaOrder)) {
+                
+                for (Object entry : mapping.getIdList(ALPHABETICAL_MAPPING)) {
                     list.add((SingleMapping) entry);
                 }
                 return true;
@@ -143,12 +150,19 @@ public class DataVisualView extends javax.swing.JPanel implements ExplorerManage
         }, true);
     }
 
-    public final void refresh() {
-        DescriptiveExecutionUnit selectedNode = iterator.getSelectedNode();
-        if (selectedNode != null && selectedNode.getProvidingType() != ExecutorType.WRITER) {
-            setDataFields(selectedNode.getMapping());
+    public final void refresh(DescriptiveExecutionUnit unit) {
+        this.unit=unit;
+        if (unit != null && unit.getProvidingType() != ExecutorType.WRITER) {
+            setDataFields(unit.getMapping());
         }
     }
+    
+    public static final Comparator ALPHABETICAL_MAPPING = new Comparator<SingleMapping>() {
+                    @Override
+                    public int compare(SingleMapping o1, SingleMapping o2) {
+                        return o1.getFieldKey().compareTo(o2.getFieldKey());
+                    }
+                };
 
 }
 

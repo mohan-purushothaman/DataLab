@@ -9,32 +9,29 @@ import java.awt.Component;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import org.ai.datalab.designer.wiz.ExecutorWizardIterator;
+import org.openide.WizardValidationException;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public class OutputWizard extends WizardPanel implements WizardDescriptor.Panel<WizardDescriptor> {
+public class OutputWizard extends WizardPanel implements WizardDescriptor.ValidatingPanel<WizardDescriptor> {
 
-    public OutputVisualPanel outputVisualPanel;
+    private final OutputVisualPanel outputVisualPanel;
 
     public OutputWizard(ExecutorWizardIterator iterator) {
         super(iterator);
+        outputVisualPanel = new OutputVisualPanel(iterator);
+        outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 2);
+        outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
+        outputVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
+        outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
+        outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
     }
 
     @Override
     public Component getComponent() {
-        
-        if(outputVisualPanel==null){
-            outputVisualPanel = new OutputVisualPanel(getIterator());
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, 2);
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, getIterator().getPropContent());
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, true);
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, true);
-            outputVisualPanel.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
-        }
-        
-        
+
         outputVisualPanel.refresh();
         return outputVisualPanel;
     }
@@ -57,6 +54,13 @@ public class OutputWizard extends WizardPanel implements WizardDescriptor.Panel<
     @Override
     public boolean isValid() {
         return true;
+    }
+
+    @Override
+    public void validate() throws WizardValidationException {
+        if (getIterator().getExistingNode() != null) {
+            outputVisualPanel.validateMapping();
+        }
     }
 
 }

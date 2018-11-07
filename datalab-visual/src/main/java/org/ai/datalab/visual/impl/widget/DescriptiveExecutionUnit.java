@@ -244,7 +244,7 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
         return getExecutorProvider().getMapping();
     }
 
-    EnumSet noOutput = EnumSet.of(ExecutorType.WRITER, ExecutorType.CONDITION);
+    private static final EnumSet noOutput = EnumSet.of(ExecutorType.WRITER, ExecutorType.CONDITION);
 
     private boolean generateData(ExecutorType type) {
         return !noOutput.contains(type);

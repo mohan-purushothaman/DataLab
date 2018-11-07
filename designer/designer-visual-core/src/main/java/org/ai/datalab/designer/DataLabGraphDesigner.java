@@ -384,13 +384,14 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
         Data oldData = node.getFinalOutputData();
         Data newData = visualNode.getFinalOutputData();
-//        Data diffData = DataUtil.newDiff(oldData, newData);
-//
-//        for (DataEdge outputEdge : outputEdges) {
-//            setEdgeSource(outputEdge, visualNode);
-//            mergeDiffs(outputEdge, diffData);
-//        }
+//TODO assert old and new data are same
 
+        for (FlowEdge outputEdge : outputEdges) {
+            setEdgeSource(outputEdge, visualNode);
+        }
+
+        
+        
         removeNode(node);
 
         if (visualNode.getProvidingType() == ExecutorType.READER) {

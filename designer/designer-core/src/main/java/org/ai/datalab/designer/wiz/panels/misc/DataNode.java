@@ -39,13 +39,15 @@ public class DataNode<ID> extends AbstractNode {
 
     private final Type originalType;
 
+    private final boolean readOnly;
+
     //TODO remove visual associateion with , deassociate Node implmentation from this class
-    public DataNode(DataVisualView view, SingleMapping mapping) {
+    public DataNode(DataVisualView view, SingleMapping mapping, boolean readOnly) {
         super(Children.LEAF, Lookup.EMPTY);
+        this.readOnly = readOnly;
         this.mapping = mapping;
         this.panel = view;
         this.originalType = mapping.getConverter().getResultType();
-
     }
 
     @Override
@@ -78,6 +80,9 @@ public class DataNode<ID> extends AbstractNode {
 //    }
     @Override
     public Action[] getActions(boolean context) {
+        if (readOnly) {
+            return new Action[0];
+        }
         return createChangeActions();
     }
 
