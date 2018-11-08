@@ -39,7 +39,7 @@ public class TypeUtil {
             if (obj instanceof Timestamp) {
                 return Type.Timestamp;
             }
-            if (obj instanceof java.sql.Date) {
+            if (obj instanceof java.util.Date) {
                 return Type.Date;
             }
             return Type.Timestamp;

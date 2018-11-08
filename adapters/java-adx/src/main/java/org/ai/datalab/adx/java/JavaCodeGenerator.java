@@ -35,9 +35,13 @@ public class JavaCodeGenerator implements CodeGenerator<String, String> {
     protected final CodeSegmentHandler<String> codeSegmentHandler;
 
     public JavaCodeGenerator(String clazzName, CodeSegment... segmentOrder) {
+        this(clazzName, new JavaCodeSegmentHandler(), segmentOrder);
+    }
+
+    public JavaCodeGenerator(String clazzName, JavaCodeSegmentHandler segmentHandler, CodeSegment... segmentOrder) {
         this.clazzName = clazzName;
         this.segmentOrder = new LinkedHashSet<>();
-        this.codeSegmentHandler = new JavaCodeSegmentHandler();
+        this.codeSegmentHandler = segmentHandler;
         this.segmentOrder.addAll(Arrays.asList(segmentOrder));
         for (CodeSegment codeSegment : CodeSegment.values()) {
             if (!this.segmentOrder.contains(codeSegment)) {
@@ -88,11 +92,10 @@ public class JavaCodeGenerator implements CodeGenerator<String, String> {
     public void addLibUrl(URL url) {
         libList.add(url);
     }
-    
+
     public void deleteLibUrl(URL url) {
         libList.remove(url);
     }
-    
 
     public String getClazzName() {
         return clazzName;
@@ -107,11 +110,11 @@ public class JavaCodeGenerator implements CodeGenerator<String, String> {
         return (s == null ? "" : s);
     }
 
-    private String formatPreValue(String s) {
+    protected String formatPreValue(String s) {
         return "\n" + (s == null ? "" : s) + "\n";
     }
 
-    private String formatPostValue(String s) {
+    protected String formatPostValue(String s) {
         return "\n" + (s == null ? "" : s) + "\n";
     }
 

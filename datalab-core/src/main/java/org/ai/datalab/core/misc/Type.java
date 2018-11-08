@@ -48,8 +48,28 @@ public enum Type {
                 return ValueConverter.SIMPLE_STRING_CONVERTER;
             case Timestamp:
                 return ValueConverter.TIMESTAMP_CONVERTER;
-                default:
-                    return ValueConverter.NO_CONVERTER;
+            default:
+                return ValueConverter.NO_CONVERTER;
         }
     }
+
+    public Object getSampleValue() {
+        switch (this) {
+            case Boolean:
+                return true;
+            case Date:
+                return new Date();
+            case Double:
+                return 1.01;
+            case Long:
+                return 9876543210L;
+            case String:
+                return "sample String";
+            case Timestamp:
+                return new Timestamp(System.currentTimeMillis());
+            default:
+                return new Object();
+        }
+    }
+
 }

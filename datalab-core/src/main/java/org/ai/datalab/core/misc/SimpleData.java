@@ -41,7 +41,7 @@ public class SimpleData implements Data {
         return value;
     }
 
-    private void setValue(String key, Object value) {
+    public void setValue(String key, Object value) {
         map.put(key, value);
     }
 

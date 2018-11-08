@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.adx.java.core;
+package org.ai.datalab.adx.java.core.adv;
 
 import static org.ai.datalab.core.adx.CodeSegment.*;
 
@@ -11,13 +11,13 @@ import static org.ai.datalab.core.adx.CodeSegment.*;
  *
  * @author Mohan Purushothaman
  */
-public class JavaProcessorCodeGenerator extends ExecutorJavaGenerator {
+public class JavaReaderCodeGenerator extends AdvancedJavaGenerator {
 
-    public JavaProcessorCodeGenerator() {
-        super("import org.ai.datalab.core.executor.impl.OneToOneDataProcessor;",
-                "public class JavaProcessor extends OneToOneDataProcessor {",
-                "    public Data process(Data data,ExecutionConfig config) throws Exception {",
-                "test.JavaProcessor",
+    public JavaReaderCodeGenerator() {
+        super("import org.ai.datalab.core.executor.Reader;",
+                "public class JavaReader implements Reader {",
+                "    public Data readData(ExecutionConfig config) throws Exception {",
+                "test.JavaReader",
                 IMPORT_DECLARATION,
                 VARIABLE_DECLARATION,
                 EXECUTOR_INIT,

@@ -3,64 +3,62 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.adx.java.visual;
+package org.ai.datalab.adx.java.visual.simple;
 
+import org.ai.datalab.adx.java.core.simple.*;
 import java.util.EnumSet;
 import java.util.Set;
-import org.openide.util.lookup.ServiceProvider;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
-import org.ai.datalab.adx.java.core.JavaConditionCodeGenerator;
-import org.ai.datalab.adx.java.core.JavaProcessorCodeGenerator;
-import org.ai.datalab.adx.java.core.JavaReaderCodeGenerator;
-import org.ai.datalab.adx.java.core.JavaWriterCodeGenerator;
+import org.ai.datalab.adx.java.core.JavaExecutorProvider;
+import org.ai.datalab.adx.java.visual.JavaExecutionUnit;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Mohan Purushothaman
  */
 @ServiceProvider(service = VisualNodeProvider.class)
-public class JavaVisualProvider extends VisualNodeProvider {
+public class SimpleJavaProvider extends VisualNodeProvider {
 
     @Override
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
 
-        return new JavaConnectorPanel(getGenerator(type), type, sampleInput);
+        return new SimpleJavaConnectorPanel(getGenerator(type, sampleInput), type, sampleInput);
     }
-    
+
     @Override
     public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SimpleJavaCodeGenerator gen = (SimpleJavaCodeGenerator) ((JavaExecutorProvider) unit.getExecutorProvider()).getCodeGenerator();
+        return new SimpleJavaConnectorPanel(gen, unit.getProvidingType(), sampleInput);
     }
 
     @Override
     public String getProviderName() {
-        return "Java Adapter";
+        return "Simple Java Adapter";
     }
 
     @Override
     public Set<ExecutorType> getSupportedTypes() {
-        return EnumSet.of(ExecutorType.READER,ExecutorType.PROCESSOR,ExecutorType.WRITER,ExecutorType.CONDITION);
+        return EnumSet.of(ExecutorType.PROCESSOR, ExecutorType.WRITER, ExecutorType.CONDITION);
     }
 
-    private JavaCodeGenerator getGenerator(ExecutorType type) {
+    private SimpleJavaCodeGenerator getGenerator(ExecutorType type, Data sampleInput) {
         switch (type) {
             case READER:
-                return new JavaReaderCodeGenerator();
+                return null;
             case PROCESSOR:
-                return new JavaProcessorCodeGenerator();
+                return new SimpleJavaProcessorCodeGenerator(sampleInput);
             case CONDITION:
-                return new JavaConditionCodeGenerator();
+                return new SimpleJavaConditionCodeGenerator(sampleInput);
             case WRITER:
-                return new JavaWriterCodeGenerator();
+                return new SimpleJavaWriterCodeGenerator(sampleInput);
         }
         throw new UnsupportedOperationException(type + " not available");
     }
-
-    
 
 }

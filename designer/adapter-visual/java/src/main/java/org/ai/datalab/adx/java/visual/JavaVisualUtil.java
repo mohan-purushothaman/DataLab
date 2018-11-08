@@ -6,6 +6,9 @@
 package org.ai.datalab.adx.java.visual;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.EnumSet;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.text.Document;
@@ -23,6 +26,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
+import org.ai.datalab.adx.java.core.simple.SimpleJavaCodeGenerator;
 import org.ai.datalab.core.adx.CodeSegment;
 
 /**
@@ -48,22 +52,15 @@ public class JavaVisualUtil {
             final DataObject dob = DataObject.find(fob);
 
             JEditorPane editor = (latestEditor = new JEditorPane(JAVA_MIME_TYPE, ""));
-            
+
             editor.getDocument().putProperty(Document.StreamDescriptionProperty, dob);
-            
 
             DialogBinding.bindComponentToFile(fob, 0, 0, editor);
-            
-            
 
-            NbEditorDocument newDoc = (NbEditorDocument)editor.getDocument();// dob.getCookie(EditorCookie.class).openDocument();
+            NbEditorDocument newDoc = (NbEditorDocument) editor.getDocument();// dob.getCookie(EditorCookie.class).openDocument();
 
             //copyDoc(newDoc, (NbEditorDocument)editor.getDocument());
-
             //editor.setDocument(newDoc);
-
-            
-
             GuardedSectionsProvider p = MimeLookup.getLookup(JAVA_MIME_TYPE).lookup(GuardedSectionsFactory.class).create(new GuardedEditorSupport() {
                 @Override
                 public StyledDocument getDocument() {
@@ -120,6 +117,33 @@ public class JavaVisualUtil {
         }
     }
 
+    public static void initiateSimpleJavaEditor(JEditorPane pane, SimpleJavaCodeGenerator generator, String fileName) {
+        try {
+            FileObject folder = FileUtil.createMemoryFileSystem().getRoot().createFolder("src").createFolder("test");
+            for (FileObject c : folder.getChildren()) {
+                c.delete();
+            }
+
+            FileObject fob = folder.createData(fileName, "java");
+            
+            String content=generator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE));
+            
+            try(OutputStream o=fob.getOutputStream()){
+                o.write(content.getBytes());
+            }
+            
+            
+            
+            
+            DialogBinding.bindComponentToFile(fob, generator.findExecuteIndex(content), 0, pane);
+            
+            pane.setText(generator.getCodeSegmentHandler().getCodeSegment(CodeSegment.EXECUTE));
+            
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
 //    private static Object[] props = {"mimeType", InputAttributes.class};
 //
 //    public static void copyDoc(NbEditorDocument newDoc, NbEditorDocument oldDoc) {
@@ -130,5 +154,4 @@ public class JavaVisualUtil {
 //            newDoc.putProperty(key, oldDoc.getProperty(key));
 //        }
 //    }
-
 }

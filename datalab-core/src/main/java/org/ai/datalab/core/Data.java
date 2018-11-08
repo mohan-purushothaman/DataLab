@@ -38,6 +38,8 @@ public interface Data extends Serializable {
      */
     public void setValue(String key, ValueConverter converter, Object value) throws Exception;
 
+    public void setValue(String key, Object value);
+    
     /**
      * delete value of a given key in data
      *
@@ -105,6 +107,11 @@ public interface Data extends Serializable {
 
         @Override
         public Set<Map.Entry<String, Object>> getEntrySet() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void setValue(String key, Object value) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

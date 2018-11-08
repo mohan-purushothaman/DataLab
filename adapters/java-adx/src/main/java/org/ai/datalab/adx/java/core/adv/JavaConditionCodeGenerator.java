@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.adx.java.core;
+package org.ai.datalab.adx.java.core.adv;
 
 import static org.ai.datalab.core.adx.CodeSegment.*;
 
@@ -11,7 +11,7 @@ import static org.ai.datalab.core.adx.CodeSegment.*;
  *
  * @author Mohan Purushothaman
  */
-public class JavaConditionCodeGenerator extends ExecutorJavaGenerator {
+public class JavaConditionCodeGenerator extends AdvancedJavaGenerator {
 
     public JavaConditionCodeGenerator() {
         super("import org.ai.datalab.core.executor.Condition;",

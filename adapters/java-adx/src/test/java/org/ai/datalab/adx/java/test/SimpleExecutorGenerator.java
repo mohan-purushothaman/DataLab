@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.adx.java.test;
 
+import org.ai.datalab.adx.java.core.adv.JavaReaderCodeGenerator;
 import org.ai.datalab.adx.java.core.*;
 import static org.ai.datalab.core.adx.CodeSegment.*;
 

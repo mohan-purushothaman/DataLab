@@ -19,6 +19,7 @@
             <groupId>org.ai.datalab</groupId>
             <artifactId>datalab-core</artifactId>
             <version>1.0-alpha-1</version>
+            <type>jar</type>
         </dependency>
         
         <dependency>

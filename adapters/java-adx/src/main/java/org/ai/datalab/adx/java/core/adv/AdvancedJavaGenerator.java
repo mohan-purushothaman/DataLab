@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.adx.java.core;
+package org.ai.datalab.adx.java.core.adv;
 
 import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.core.adx.CodeSegment;
@@ -18,9 +18,9 @@ import static org.ai.datalab.core.adx.CodeSegment.VARIABLE_DECLARATION;
  *
  * @author Mohan Purushothaman
  */
-public class ExecutorJavaGenerator extends JavaCodeGenerator {
+public class AdvancedJavaGenerator extends JavaCodeGenerator {
 
-    public ExecutorJavaGenerator(String extraImport, String classHeader, String executeMethod, String clazzName, CodeSegment... segmentOrder) {
+    public AdvancedJavaGenerator(String extraImport, String classHeader, String executeMethod, String clazzName, CodeSegment... segmentOrder) {
         super(clazzName, segmentOrder);
         setPreSection(IMPORT_DECLARATION, "package test;\n"
                 + "/** <editor-fold defaultstate=\"collapsed\" desc=\"Imports\">*/");
