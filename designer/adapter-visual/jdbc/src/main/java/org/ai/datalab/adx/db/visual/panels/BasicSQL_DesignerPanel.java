@@ -7,9 +7,11 @@ package org.ai.datalab.adx.db.visual.panels;
 
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Collection;
 import javax.swing.ComboBoxModel;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -20,6 +22,7 @@ import org.ai.datalab.adx.db.DB_Adapter;
 import org.ai.datalab.adx.db.DB_Processor;
 import org.ai.datalab.adx.db.DB_Provider;
 import org.ai.datalab.adx.db.visual.DbExecutionUnit;
+import org.ai.datalab.adx.db.visual.JDBC_ResourceCreater;
 import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
@@ -32,8 +35,10 @@ import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.designer.editor.SimpleEditor;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.designer.util.ResourceVisualUtil;
+import org.ai.datalab.designer.visual.resource.ResourceCreator;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -116,7 +121,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(resourcePools, 0, 509, Short.MAX_VALUE)
+                .addComponent(resourcePools, 0, 517, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -176,8 +181,26 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
-        resourcePools.setModel((ComboBoxModel<ResourcePool<Connection>>) ResourceVisualUtil.getResourceComboBox(Connection.class, null));
+         
+        Collection<? extends ResourceCreator> r = Lookup.getDefault().lookupAll(ResourceCreator.class);
+
+        for (ResourceCreator resourceCreator : r) {
+            if (resourceCreator instanceof JDBC_ResourceCreater) {
+                ResourcePool<File> rp = resourceCreator.createResourcePool();
+                if (rp != null) {
+                    try {
+                        ResourceStore.addResourcePool(rp);
+                        resourcePools.setModel((ComboBoxModel<ResourcePool<Connection>>) ResourceVisualUtil.getResourceComboBox(Connection.class, null));
+                        resourcePools.setSelectedItem(rp);
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            }
+        }
+        
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

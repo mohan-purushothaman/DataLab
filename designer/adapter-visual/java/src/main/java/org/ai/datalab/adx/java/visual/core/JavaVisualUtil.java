@@ -3,13 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ai.datalab.adx.java.visual;
+package org.ai.datalab.adx.java.visual.core;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.EnumSet;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
@@ -28,6 +31,7 @@ import org.openide.util.Exceptions;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.adx.java.core.simple.SimpleJavaCodeGenerator;
 import org.ai.datalab.core.adx.CodeSegment;
+import org.netbeans.editor.BaseTextUI;
 
 /**
  *
@@ -36,7 +40,11 @@ import org.ai.datalab.core.adx.CodeSegment;
 public class JavaVisualUtil {
 
     public static final String JAVA_MIME_TYPE = "text/x-java";
-    static JEditorPane latestEditor;
+    private static JEditorPane latestEditor;
+
+    public static JEditorPane getLatestEditor() {
+        return latestEditor;
+    }
 
     public static JPanel addJavaEditorPane(String fileName, JavaCodeGenerator generator) {
 
@@ -117,7 +125,7 @@ public class JavaVisualUtil {
         }
     }
 
-    public static void initiateSimpleJavaEditor(JEditorPane pane, SimpleJavaCodeGenerator generator, String fileName) {
+    public static JPanel getSimpleJavaEditor(SimpleJavaCodeGenerator generator, String fileName) {
         try {
             FileObject folder = FileUtil.createMemoryFileSystem().getRoot().createFolder("src").createFolder("test");
             for (FileObject c : folder.getChildren()) {
@@ -125,23 +133,33 @@ public class JavaVisualUtil {
             }
 
             FileObject fob = folder.createData(fileName, "java");
-            
-            String content=generator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE));
-            
-            try(OutputStream o=fob.getOutputStream()){
+
+            String content = generator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE));
+
+            try (OutputStream o = fob.getOutputStream()) {
                 o.write(content.getBytes());
             }
-            
-            
-            
-            
+            DataObject dob = DataObject.find(fob);
+
+            JEditorPane pane = (latestEditor = new JEditorPane(JAVA_MIME_TYPE, ""));
+
+            pane.getDocument().putProperty(Document.StreamDescriptionProperty, dob);
+
             DialogBinding.bindComponentToFile(fob, generator.findExecuteIndex(content), 0, pane);
-            
+
+            NbEditorDocument newDoc = (NbEditorDocument) pane.getDocument();
+
             pane.setText(generator.getCodeSegmentHandler().getCodeSegment(CodeSegment.EXECUTE));
-            
+            JPanel jp = new JPanel(new BorderLayout());
+            jp.add(newDoc.createEditor(pane), BorderLayout.CENTER);
+            return jp;
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
+            JPanel p = new JPanel();
+            p.add(new JLabel("initiating failed"));
+            return p;
         }
+
     }
 
 //    private static Object[] props = {"mimeType", InputAttributes.class};

@@ -6,7 +6,6 @@
 package org.ai.datalab.designer.project.impl;
 
 import java.io.IOException;
-import org.netbeans.api.actions.Openable;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;

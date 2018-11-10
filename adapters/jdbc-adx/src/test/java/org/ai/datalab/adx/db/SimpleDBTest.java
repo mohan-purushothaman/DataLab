@@ -66,7 +66,7 @@ public class SimpleDBTest {
                 s.execute("CREATE table testTable( i int, j int)");
                 s.execute("create index testIndex_i on testTable(i)");
             }
-            int noOfRuns = 10;
+            int noOfRuns = 1000;
             int batchSize = 1000;
 
             try (PreparedStatement pstmt = c.prepareStatement("insert into testTable values(?,1)")) {

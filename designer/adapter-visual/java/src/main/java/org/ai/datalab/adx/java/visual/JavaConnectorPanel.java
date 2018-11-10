@@ -5,18 +5,23 @@
  */
 package org.ai.datalab.adx.java.visual;
 
+import org.ai.datalab.adx.java.visual.core.DataLabClassPathProvider;
+import org.ai.datalab.adx.java.visual.core.ErrorAnnotation;
+import org.ai.datalab.adx.java.visual.core.JavaVisualUtil;
 import java.io.File;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.editor.AnnotationType;
 import org.netbeans.modules.editor.NbEditorDocument;
 import org.openide.filesystems.FileChooserBuilder;
-import org.openide.text.Annotation;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
@@ -29,11 +34,16 @@ import org.ai.datalab.core.adx.misc.SingleMapping;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Processor;
 import org.ai.datalab.core.executor.Reader;
+import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.visual.impl.DescriptiveSingleMapping;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.mdkt.compiler.CompilationException;
+import org.netbeans.editor.AnnotationDesc;
+import org.netbeans.editor.DocumentUtilities;
+import org.openide.text.Annotation;
 
 /**
  *
@@ -53,9 +63,9 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         this.codeGenerator = generator;
         this.className = JavaUtil.getFileName(codeGenerator.getClazzName());
         initComponents();
-        codePane = JavaVisualUtil.latestEditor;
+        codePane = JavaVisualUtil.getLatestEditor();
         DataLabClassPathProvider.updateCodeGenerator(generator);
-         
+
     }
 
     /**
@@ -165,17 +175,44 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         return "validating Java connector";
     }
 
+    private final List<ErrorAnnotation> errorAnnotations = new LinkedList<>();
+
     @Override
     public DescriptiveExecutionUnit validateConnector(ProgressHandle handle) throws Exception {
         NbEditorDocument doc = (NbEditorDocument) codePane.getDocument();
-        //HintsController.setErrors
-        JavaVisualUtil.populateGenerator(doc, codeGenerator);
-        Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codePane.getText(), codeGenerator.getLibList());
-        Executor e = clazz.newInstance();
-        Data sampleOutput = getSampleData(e);
-        JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : getDummyMapping(sampleOutput));
 
-        return new JavaExecutionUnit("java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
+        JavaVisualUtil.populateGenerator(doc, codeGenerator);
+
+        for (ErrorAnnotation e : errorAnnotations) {
+            doc.removeAnnotation(e);
+        }
+        errorAnnotations.clear();
+        
+        try {
+            Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codePane.getText(), codeGenerator.getLibList()); // need to pass text editor content for line matching
+            Executor e = clazz.newInstance();
+            Data sampleOutput = getSampleData(e);
+            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : getDummyMapping(sampleOutput));
+
+            return new JavaExecutionUnit("java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
+        } catch (CompilationException e) {
+            DiagnosticCollector diagnostics = e.getDiagnostics();
+
+            if (diagnostics != null) {
+                for (Object d : diagnostics.getDiagnostics()) {
+                    Diagnostic d1 = (Diagnostic) d;
+                    errorAnnotations.add(new ErrorAnnotation(d1));
+                }
+                for (ErrorAnnotation errorAnnotation : errorAnnotations) {
+                    doc.addAnnotation(doc.createPosition((int) errorAnnotation.getDiagnostic().getPosition()), -1, errorAnnotation);
+                }
+            }
+
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     @Override
@@ -195,14 +232,13 @@ public class JavaConnectorPanel extends VisualNodeValidator {
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
-
     private Data getSampleData(Executor e) throws Exception {
 
         switch (type) {
             case READER:
                 return ((Reader) e).readData(null);
             case PROCESSOR:
-                return ((Processor) e).processData(new Data[]{sampleInput}, null)[0];
+                return ((Processor) e).processData(new Data[]{SimpleData.cloneData(sampleInput)}, null)[0];
         }
         return null;
     }
@@ -219,28 +255,14 @@ public class JavaConnectorPanel extends VisualNodeValidator {
     }
 
     private ListModel<URL> getLibModel() {
-        try{
-        DefaultListModel<URL> model = new DefaultListModel<>();
-        for (URL url : codeGenerator.getLibList()) {
-            model.addElement(url);
-        }
-        return model;
-        }catch(Exception e){
+        try {
+            DefaultListModel<URL> model = new DefaultListModel<>();
+            for (URL url : codeGenerator.getLibList()) {
+                model.addElement(url);
+            }
+            return model;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-}
-
-class DescAnnotation extends Annotation {
-
-    @Override
-    public String getAnnotationType() {
-        return AnnotationType.PROP_SEVERITY;
-    }
-
-    @Override
-    public String getShortDescription() {
-        return "who knows";
-    }
-
 }

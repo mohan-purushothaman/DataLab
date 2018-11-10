@@ -1,10 +1,18 @@
 package org.mdkt.compiler;
 
-public class CompilationException extends RuntimeException {
-	private static final long serialVersionUID = 5272588827551900536L;
+import javax.tools.DiagnosticCollector;
 
-	public CompilationException(String msg) {
-		super(msg);
-	}
+public class CompilationException extends Exception {
+
+    private final DiagnosticCollector diagnostic;
+
+    public CompilationException(DiagnosticCollector diagnostic, String msg) {
+        super(msg);
+        this.diagnostic = diagnostic;
+    }
+
+    public DiagnosticCollector getDiagnostics() {
+        return diagnostic;
+    }
 
 }

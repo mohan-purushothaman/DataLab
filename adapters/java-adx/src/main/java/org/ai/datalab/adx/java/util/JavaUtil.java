@@ -22,12 +22,11 @@ import org.ai.datalab.core.Data;
  */
 public class JavaUtil {
 
-    public static <V> Class<V> createClass(JavaCodeGenerator generator) {
+    public static <V> Class<V> createClass(JavaCodeGenerator generator) throws Exception {
         return createClass(generator.getClazzName(), generator.generate(), generator.getLibList());
     }
 
-    public static <V> Class<V> createClass(String className, String code, List<URL> libList) {
-        try {
+    public static <V> Class<V> createClass(String className, String code, List<URL> libList) throws Exception {
             InMemoryJavaCompiler compiler = InMemoryJavaCompiler.newInstance();
             List<URL> lib = new LinkedList<>(libList);
             lib.add(getDataLabBaseLib());
@@ -40,9 +39,6 @@ public class JavaUtil {
 
             Class<V> clazz = (Class<V>) compiler.compile(className, code);
             return clazz;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     public static final String getFileName(String clazzName) {

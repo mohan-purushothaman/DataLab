@@ -7,11 +7,15 @@ package org.ai.datalab.designer.startup;
 
 import org.openide.modules.ModuleInstall;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
+import org.netbeans.api.db.explorer.JDBCDriverManager;
 
 public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
+
+        JDBCDriverManager.getDefault().getDrivers();
+
         ResourceStore.getResourceList();
     }
 

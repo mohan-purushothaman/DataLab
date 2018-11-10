@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.adx.web.visual;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,12 +29,15 @@ import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.designer.editor.SimpleEditor;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
+import org.ai.datalab.designer.visual.resource.ResourceCreator;
 import org.ai.datalab.designer.visual.resource.ResourceStore;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -56,16 +60,16 @@ public class Http_DesignerPanel extends VisualNodeValidator {
         if (type == ExecutorType.WRITER) {
             jTabbedPane1.remove(sampleResponseTab);
         }
-        
-           if (this.existingUnit != null && this.existingUnit instanceof HttpExecutionUnit) {
-            HttpExecutionUnit unit=(HttpExecutionUnit) this.existingUnit;
-            WebProvider provider=(WebProvider) unit.getExecutorProvider();
+
+        if (this.existingUnit != null && this.existingUnit instanceof HttpExecutionUnit) {
+            HttpExecutionUnit unit = (HttpExecutionUnit) this.existingUnit;
+            WebProvider provider = (WebProvider) unit.getExecutorProvider();
             webResource.setSelectedItem(ResourceStore.getResourcePool(provider.getResourceID()));
             httpMethod.setSelectedItem(provider.getRequestType());
             textArea.setText(provider.getRequestBody());
             //ADD header and footer
         }
-        
+
     }
 
     public ComboBoxModel<ResourcePool> getModel() {
@@ -201,7 +205,22 @@ public class Http_DesignerPanel extends VisualNodeValidator {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        boolean open = OptionsDisplayer.getDefault().open(ResourceStore.RESOURCE_PANEL_ID, true);
+        Collection<? extends ResourceCreator> r = Lookup.getDefault().lookupAll(ResourceCreator.class);
+
+        for (ResourceCreator resourceCreator : r) {
+            if (resourceCreator instanceof HttpResourceCreator) {
+                ResourcePool<File> rp = resourceCreator.createResourcePool();
+                if (rp != null) {
+                    try {
+                        ResourceStore.addResourcePool(rp);
+                        webResource.setModel(getModel());
+                        webResource.setSelectedItem(rp);
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            }
+        }
         webResource.setModel(getModel());
     }//GEN-LAST:event_jButton1ActionPerformed
 

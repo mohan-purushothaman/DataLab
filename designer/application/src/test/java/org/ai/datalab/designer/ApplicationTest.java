@@ -11,8 +11,9 @@ public class ApplicationTest extends NbTestCase {
         return NbModuleSuite.createConfiguration(ApplicationTest.class).
                 gui(false).
                 //failOnMessage(Level.WARNING). // works at least in RELEASE71
-                failOnException(Level.INFO).
-                enableClasspathModules(false). 
+                failOnException(Level.WARNING).
+                enableClasspathModules(false).
+                //enableModules(".*").
                 clusters(".*").
                 suite(); // RELEASE71+, else use NbModuleSuite.create(NbModuleSuite.createConfiguration(...))
     }
@@ -22,11 +23,11 @@ public class ApplicationTest extends NbTestCase {
     }
 
     public void testApplication() {
-        // pass if there are merely no warnings/exceptions
-        /* Example of using Jelly Tools (additional test dependencies required) with gui(true):
-        new ActionNoBlock("Help|About", null).performMenu();
-        new NbDialogOperator("About").closeByButton();
-         */
-    }
+            // pass if there are merely no warnings/exceptions
+            /* Example of using Jelly Tools (additional test dependencies required) with gui(true):
+            new ActionNoBlock("Help|About", null).performMenu();
+            new NbDialogOperator("About").closeByButton();
+            */
+        }
 
 }

@@ -5,7 +5,6 @@
  */
 package org.ai.datalab.designer.misc;
 
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -14,10 +13,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.event.EventListenerList;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;

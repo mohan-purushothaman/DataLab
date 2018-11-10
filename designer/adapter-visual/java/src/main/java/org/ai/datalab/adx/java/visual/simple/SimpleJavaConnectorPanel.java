@@ -5,22 +5,32 @@
  */
 package org.ai.datalab.adx.java.visual.simple;
 
-import org.ai.datalab.adx.java.JavaCodeGenerator;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.JEditorPane;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import org.ai.datalab.adx.java.core.JavaExecutorProvider;
 import org.ai.datalab.adx.java.core.simple.SimpleJavaCodeGenerator;
 import org.ai.datalab.adx.java.util.JavaUtil;
-import org.ai.datalab.adx.java.visual.DataLabClassPathProvider;
+import org.ai.datalab.adx.java.visual.core.DataLabClassPathProvider;
 import org.ai.datalab.adx.java.visual.JavaConnectorPanel;
-import org.ai.datalab.adx.java.visual.JavaVisualUtil;
+import org.ai.datalab.adx.java.visual.core.ErrorAnnotation;
+import org.ai.datalab.adx.java.visual.core.JavaVisualUtil;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.Executor;
 import org.ai.datalab.core.adx.CodeSegment;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Processor;
 import org.ai.datalab.core.executor.Reader;
+import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
+import org.mdkt.compiler.CompilationException;
 import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.modules.editor.NbEditorDocument;
+import org.openide.text.Annotation;
 
 /**
  *
@@ -30,8 +40,10 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
 
     private final ExecutorType type;
     private final Data sampleInput;
-    private final JavaCodeGenerator codeGenerator;
+    private final SimpleJavaCodeGenerator codeGenerator;
     private final String className;
+
+    private final JEditorPane codePane;
 
     public SimpleJavaConnectorPanel(SimpleJavaCodeGenerator generator, ExecutorType type, Data sampleInput) {
         this.type = type;
@@ -39,8 +51,7 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
         this.codeGenerator = generator;
         this.className = JavaUtil.getFileName(codeGenerator.getClazzName());
         initComponents();
-       
-        JavaVisualUtil.initiateSimpleJavaEditor(pane, generator, className);
+        codePane = JavaVisualUtil.getLatestEditor();
         DataLabClassPathProvider.updateCodeGenerator(generator);
 
     }
@@ -54,13 +65,13 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        pane = new javax.swing.JEditorPane();
         jLabel1 = new javax.swing.JLabel();
-
-        jScrollPane1.setViewportView(pane);
+        codePanel = JavaVisualUtil.getSimpleJavaEditor(codeGenerator, className);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(SimpleJavaConnectorPanel.class, "SimpleJavaConnectorPanel.jLabel1.text")); // NOI18N
+
+        codePanel.setMinimumSize(new java.awt.Dimension(100, 100));
+        codePanel.setPreferredSize(new java.awt.Dimension(200, 260));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -69,8 +80,8 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                    .addComponent(codePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -78,8 +89,8 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(codePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -89,17 +100,42 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
         return "Validating Simple Java Connector";
     }
 
+    private final List<ErrorAnnotation> errorAnnotations = new LinkedList<>();
+
     @Override
     public DescriptiveExecutionUnit validateConnector(ProgressHandle handle) throws Exception {
+        NbEditorDocument doc = (NbEditorDocument) codePane.getDocument();
+        int index = codeGenerator.findExecuteIndex(codeGenerator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE)));
+        codeGenerator.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, codePane.getText());
 
-        codeGenerator.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, pane.getText());
+        for (ErrorAnnotation e : errorAnnotations) {
+            doc.removeAnnotation(e);
+        }
+        errorAnnotations.clear();
+        try {
+            Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codeGenerator.generate(), codeGenerator.getLibList());
+            Executor e = clazz.newInstance();
+            Data sampleOutput = getSampleData(e);
+            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : JavaConnectorPanel.getDummyMapping(sampleOutput));
 
-        Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codeGenerator.generate(), codeGenerator.getLibList());
-        Executor e = clazz.newInstance();
-        Data sampleOutput = getSampleData(e);
-        JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : JavaConnectorPanel.getDummyMapping(sampleOutput));
+            return new SimpleJavaExecutionUnit("simple java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
+        } catch (CompilationException e) {
+            DiagnosticCollector diagnostics = e.getDiagnostics();
 
-        return new SimpleJavaExecutionUnit("simple java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
+            if (diagnostics != null) {
+                for (Object d : diagnostics.getDiagnostics()) {
+                    Diagnostic d1 = (Diagnostic) d;
+                    errorAnnotations.add(new ErrorAnnotation(d1));
+                }
+                for (ErrorAnnotation errorAnnotation : errorAnnotations) {
+                    doc.addAnnotation(doc.createPosition((int) errorAnnotation.getDiagnostic().getPosition()-index), -1, errorAnnotation);
+                }
+            }
+
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
@@ -113,15 +149,14 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
             case READER:
                 return ((Reader) e).readData(null);
             case PROCESSOR:
-                return ((Processor) e).processData(new Data[]{sampleInput}, null)[0];
+                return ((Processor) e).processData(new Data[]{SimpleData.cloneData(sampleInput)}, null)[0];
         }
         return null;
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel codePanel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JEditorPane pane;
     // End of variables declaration//GEN-END:variables
 }

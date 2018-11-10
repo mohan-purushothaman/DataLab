@@ -9,7 +9,6 @@ import org.openide.nodes.Node;
 import org.ai.datalab.adapter.excel.adx.ExcelProvider;
 import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
-import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Property;
 import org.ai.datalab.core.misc.PropertyChangeListener;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;

@@ -210,7 +210,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems</artifactId>
-            <version>${netbeans.version}</version>
+            <version>RELEASE82</version>
             <type>jar</type>
         </dependency>
         <dependency>

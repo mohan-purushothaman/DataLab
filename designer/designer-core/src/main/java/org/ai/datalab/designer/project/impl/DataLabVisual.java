@@ -92,7 +92,7 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
             
             if (!ResourceValidatorUtil.findMissingResources(job).isEmpty()) {
                         if(ResourceValidatorUtil.autoCorrectResourcesMismatches(job)){
-                            obj.setModified(true);
+                            edit();
                         }
                     }
             
@@ -256,7 +256,7 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
 
                     if (!ResourceValidatorUtil.findMissingResources(job).isEmpty()) {
                         if(ResourceValidatorUtil.autoCorrectResourcesMismatches(job)){
-                            obj.setModified(true);
+                            edit();
                         }
                     }
                     
@@ -362,7 +362,7 @@ public final class DataLabVisual extends JPanel implements MultiViewElement, Edi
     }
 
     @Override
-    public void edit() {
+    public final void edit() {
         obj.setUpdatedScene(graphScene);
     }
 

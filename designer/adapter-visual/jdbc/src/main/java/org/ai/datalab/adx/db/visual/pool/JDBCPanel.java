@@ -7,6 +7,8 @@ package org.ai.datalab.adx.db.visual.pool;
 
 import java.awt.Color;
 import java.sql.Connection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -16,6 +18,7 @@ import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.adx.db.visual.NB_JDBC_ResourcePool;
+import org.netbeans.api.db.explorer.ConnectionListener;
 
 public final class JDBCPanel extends javax.swing.JPanel {
 
@@ -28,8 +31,13 @@ public final class JDBCPanel extends javax.swing.JPanel {
     public JDBCPanel(boolean readOnly, ResourcePool pool) {
         this.readOnly = readOnly;
         initComponents();
+        ConnectionManager.getDefault().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connectionsChanged() {
+                dbConn.setModel(getConnectionModel());
+            }
+        });
 
-        // TODO listen to changes in form fields and call controller.changed()
     }
 
     /**
@@ -49,6 +57,7 @@ public final class JDBCPanel extends javax.swing.JPanel {
         queryTimeout = new javax.swing.JSpinner();
         jLabel7 = new javax.swing.JLabel();
         dbConn = new javax.swing.JComboBox<>();
+        newConn = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(JDBCPanel.class, "JDBCPanel.jPanel1.border.title"))); // NOI18N
 
@@ -75,6 +84,13 @@ public final class JDBCPanel extends javax.swing.JPanel {
 
         dbConn.setModel(getConnectionModel());
 
+        org.openide.awt.Mnemonics.setLocalizedText(newConn, org.openide.util.NbBundle.getMessage(JDBCPanel.class, "JDBCPanel.newConn.text")); // NOI18N
+        newConn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newConnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -87,21 +103,24 @@ public final class JDBCPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(connTestStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(queryTimeout))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 99, Short.MAX_VALUE))
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxSize, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                            .addComponent(dbConn, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(maxSize, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(queryTimeout, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                            .addComponent(dbConn, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(newConn)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, jLabel6, jLabel7});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, jLabel6});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -109,16 +128,15 @@ public final class JDBCPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(dbConn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dbConn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(newConn))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(maxSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maxSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(queryTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(56, 56, 56)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(testConn)
                     .addComponent(connTestStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -151,7 +169,7 @@ public final class JDBCPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         connTestStatus.setForeground(Color.BLUE);
         connTestStatus.setText("testing ....");
-        DatabaseConnection conn = (DatabaseConnection) this.dbConn.getSelectedItem();
+        String conn = (String) this.dbConn.getSelectedItem();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -159,7 +177,7 @@ public final class JDBCPanel extends javax.swing.JPanel {
                     int maxSizeValue = (Integer) maxSize.getValue();
                     //TODO query timeout setting
                     int queryTimeoutValue = (Integer) queryTimeout.getValue();
-                    ResourcePool<Connection> p = new NB_JDBC_ResourcePool(conn.getName(), maxSizeValue);
+                    ResourcePool<Connection> p = new NB_JDBC_ResourcePool(conn, maxSizeValue);
                     try (Resource<Connection> r = p.getResource()) {
                         try (Connection c = r.get()) {
                             SwingUtilities.invokeLater(new Runnable() {
@@ -189,8 +207,16 @@ public final class JDBCPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_testConnActionPerformed
 
-    public ComboBoxModel getConnectionModel() {
-        return new DefaultComboBoxModel(ConnectionManager.getDefault().getConnections());
+    private void newConnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newConnActionPerformed
+        ConnectionManager.getDefault().showAddConnectionDialog(null);
+    }//GEN-LAST:event_newConnActionPerformed
+
+    public ComboBoxModel<String> getConnectionModel() {
+        List<String> conn = new LinkedList<>();
+        for (DatabaseConnection db : ConnectionManager.getDefault().getConnections()) {
+            conn.add(db.getName());
+        }
+        return new DefaultComboBoxModel<>(conn.toArray(new String[0]));
 
     }
 
@@ -230,6 +256,7 @@ public final class JDBCPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner maxSize;
+    private javax.swing.JButton newConn;
     private javax.swing.JSpinner queryTimeout;
     private javax.swing.JButton testConn;
     // End of variables declaration//GEN-END:variables

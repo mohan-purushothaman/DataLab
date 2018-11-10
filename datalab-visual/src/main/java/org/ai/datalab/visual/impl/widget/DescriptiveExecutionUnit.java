@@ -26,6 +26,7 @@ import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Property;
 import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.core.misc.DataUtil;
+import org.ai.datalab.core.misc.FixedData;
 import org.ai.datalab.visual.DataLabVisualUtil;
 
 /**
@@ -74,7 +75,7 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
 
     public DescriptiveExecutionUnit(String suggestedDescription, AbstractExecutorProvider provider, Data usedInputFields) {
         super(suggestedDescription, provider, null, null);
-        this.inputFields = usedInputFields;
+        this.inputFields = FixedData.getFixedData(usedInputFields);
     }
 
     public void setSuggestedDescription(String suggestedDescription) {

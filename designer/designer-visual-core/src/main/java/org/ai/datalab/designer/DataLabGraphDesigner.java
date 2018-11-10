@@ -56,6 +56,7 @@ import org.ai.datalab.core.builder.ConditionExecutionUnit;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Configuration;
+import org.ai.datalab.core.misc.FixedData;
 import org.ai.datalab.core.misc.PropertyHandler;
 import org.ai.datalab.designer.core.ConnectorWizardIteratorInterface;
 import org.ai.datalab.visual.DataLabTheme;
@@ -301,7 +302,8 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
                 //TODO
                 //GraphUtil.getWholeDataAfter(DataLabGraphDesigner.this, node)
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(ExecutorType.PROCESSOR, node.getFinalOutputData());
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
+                        .getVisualNode(ExecutorType.PROCESSOR, FixedData.getFixedData(node.getFinalOutputData()));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -315,7 +317,8 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(ExecutorType.WRITER, node.getFinalOutputData());
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
+                        .getVisualNode(ExecutorType.WRITER, FixedData.getFixedData(node.getFinalOutputData()));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -329,7 +332,8 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(ExecutorType.CONDITION, node.getFinalOutputData());
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
+                        .getVisualNode(ExecutorType.CONDITION, FixedData.getFixedData(node.getFinalOutputData()));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -390,8 +394,6 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
             setEdgeSource(outputEdge, visualNode);
         }
 
-        
-        
         removeNode(node);
 
         if (visualNode.getProvidingType() == ExecutorType.READER) {

@@ -210,7 +210,7 @@ public class ExcelConnectorPanel extends VisualNodeValidator {
         updateSheets();
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
-    private final ComboBoxModel<ResourcePool<File>> getResourceComboBoxModel() {
+    private ComboBoxModel<ResourcePool<File>> getResourceComboBoxModel() {
         return (ComboBoxModel<ResourcePool<File>>) ResourceVisualUtil.getResourceComboBox(File.class, new ResourcePoolQualifier<File>() {
             @Override
             public boolean validate(ResourcePool<File> resource) {

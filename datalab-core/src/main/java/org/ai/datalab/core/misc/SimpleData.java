@@ -46,8 +46,8 @@ public class SimpleData implements Data {
     }
 
     @Override
-    public void setValue(String key, ValueConverter converter, Object value) throws Exception{
-        setValue(key, (value==null||converter == null) ? value : converter.convert(value));
+    public void setValue(String key, ValueConverter converter, Object value) throws Exception {
+        setValue(key, (value == null || converter == null) ? value : converter.convert(value));
     }
 
     @Override
@@ -75,6 +75,14 @@ public class SimpleData implements Data {
 
     public Set<Entry<String, Object>> getEntrySet() {
         return new LinkedHashSet<>(map.entrySet());
+    }
+
+    public static Data cloneData(Data data) {
+        SimpleData newData = new SimpleData();
+        for (Entry<String, Object> e : data.getEntrySet()) {
+            newData.setValue(e.getKey(), e.getValue());
+        }
+        return newData;
     }
 
 }
