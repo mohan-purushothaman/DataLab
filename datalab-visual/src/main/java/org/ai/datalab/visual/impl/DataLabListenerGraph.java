@@ -7,16 +7,17 @@ package org.ai.datalab.visual.impl;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.EnumSet;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.Action;
+import javax.swing.JProgressBar;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -31,7 +32,6 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Cancellable;
-import org.openide.util.ImageUtilities;
 import org.openide.windows.IOColorLines;
 import org.openide.windows.IOProvider;
 import org.openide.windows.IOSelect;
@@ -84,16 +84,20 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
 
     private final InputOutput io;
 
+    private final ScheduledExecutorService schduledSwingDrawer;
+    
+    private final DelayedSwingUpdater swingUpdater;
+
     static {
         try {
-            Image sourceImage = ImageUtilities.loadImage("paper_grid_progress.png");
-            int width = sourceImage.getWidth(null);
-            int height = sourceImage.getHeight(null);
-
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics = image.createGraphics();
-            graphics.drawImage(sourceImage, 0, 0, null);
-            graphics.dispose();
+//            Image sourceImage = ImageUtilities.loadImage("paper_grid_progress.png");
+//            int width = sourceImage.getWidth(null);
+//            int height = sourceImage.getHeight(null);
+//
+//            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+//            Graphics2D graphics = image.createGraphics();
+//            graphics.drawImage(sourceImage, 0, 0, null);
+//            graphics.dispose();
             PAINT_BACKGROUND = new Color(255, 250, 250);//new TexturePaint(image, new Rectangle(0, 0, width, height));
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,17 +140,24 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         handle.start();
         handle.switchToIndeterminate();
 
-        timeWidget = new TimeWidget(this);
+        timeWidget = new TimeWidget(this,new JProgressBar());
 
         mainLayer.addChild(timeWidget);
         mainLayer.addChild(resourceWidgets);
         timeWidget.setPreferredLocation(new Point(10, 10));
-        resourceWidgets.setPreferredLocation(new Point(200, 10));
+        resourceWidgets.setPreferredLocation(new Point(500, 10));
         DataLabVisualUtil.validateScene(this);
         EventQueue.invokeLater(() -> {
             sceneLayout.layoutGraph(DataLabListenerGraph.this);
         });
-
+        schduledSwingDrawer = Executors.newSingleThreadScheduledExecutor();
+        schduledSwingDrawer.scheduleWithFixedDelay((swingUpdater=new DelayedSwingUpdater() {
+            @Override
+            public void processUpdates() {
+                resourceWidgets.updateResource();
+                timeWidget.updateTime();
+            }
+        }), 1, 10, TimeUnit.SECONDS);
     }
 
     public String getJobName() {
@@ -261,8 +272,8 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
     }
 
     @Override
-    public void updateProgress(ExecutionUnit primitive, int threadNo, ExecutionResult result,Data... outputData) {
-        getProgressHandler(primitive).updateProgress(result,outputData);
+    public void updateProgress(ExecutionUnit primitive, int threadNo, ExecutionResult result, Data... outputData) {
+        getProgressHandler(primitive).updateProgress(result, outputData);
     }
 
     @Override
@@ -283,10 +294,6 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
 
     }
 
-    public void updateResource(String[] resourceId) {
-        resourceWidgets.updateResource(resourceId);
-    }
-
     private void addListeners() {
 
     }
@@ -295,7 +302,8 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
     public void jobEnded() {
         handle.finish();
         timeWidget.complete();
-
+        swingUpdater.interrupt();
+        schduledSwingDrawer.shutdownNow();
     }
 
     @Override

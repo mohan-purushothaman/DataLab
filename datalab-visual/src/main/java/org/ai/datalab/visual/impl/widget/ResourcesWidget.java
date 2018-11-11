@@ -6,12 +6,11 @@
 package org.ai.datalab.visual.impl.widget;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JProgressBar;
 import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
-import org.netbeans.api.visual.widget.Widget;
 import org.ai.datalab.core.resource.ResourceFactory;
 import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.visual.DataLabVisualUtil;
@@ -27,6 +26,8 @@ import org.netbeans.api.visual.widget.ComponentWidget;
 public class ResourcesWidget extends VMDNodeWidget {
 
     private final Map<String, ResourceWidget> widgets = new ConcurrentHashMap<>();
+    
+    
 
     public ResourcesWidget(GraphScene scene) {
         super(scene);
@@ -45,9 +46,9 @@ public class ResourcesWidget extends VMDNodeWidget {
         }
     }
 
-    public void updateResource(String... resourceId) {
-        for (String r : resourceId) {
-            widgets.get(r).updateResource();
+    public void updateResource() {
+        for (Entry<String,ResourceWidget> r : widgets.entrySet()) {
+            r.getValue().updateResource();
         }
     }
 
@@ -63,8 +64,11 @@ class ResourceWidget extends ComponentWidget {
     public ResourceWidget(Scene scene, String resourceId,JProgressBar bar) {
         super(scene,bar);
         this.bar=bar;
-        bar.setString(resourceId);
+        bar.setString("    "+resourceId+"    ");
         bar.setStringPainted(true);
+        //bar.setForeground(Color.BLACK);
+        //bar.setBackground(Color.WHITE);
+        bar.setOpaque(true);
         //AbbreviatedLabelWidget nameWidget = new AbbreviatedLabelWidget(scene, resourceId);
         //addChild(nameWidget);
 //        resourceCount = new LabelWidget(scene, "? (?)");
@@ -81,6 +85,7 @@ class ResourceWidget extends ComponentWidget {
         int cur=pool.getNumActive();
         bar.setMaximum(max);
         bar.setValue(cur);
+        bar.setToolTipText(cur+" out of "+max +" used");
         //resourceCount.setLabel(pool.getNumActive() + " (" + pool.getMaxCount() + ")");
     }
 

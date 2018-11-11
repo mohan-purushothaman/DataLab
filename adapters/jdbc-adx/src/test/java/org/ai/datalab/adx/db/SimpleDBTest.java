@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.ai.datalab.adx.db;
 
 import java.sql.Connection;
@@ -12,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -19,7 +19,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.ai.datalab.adx.db.DB_Adapter;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.resource.ResourceFactory;
@@ -86,12 +85,18 @@ public class SimpleDBTest {
         job.setReader("Reader", DB_Adapter.createReader(p, "select i,j from testTable", null, 1000))
                 .addExecutor("Test pro", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=${I} where i=${I}", null))
                 //.setThreadCount(20).getParent().addExecutor("Testing", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=100 where i>97000", null))
-                .setThreadCount(20);
+                .setThreadCount(2);
 
         System.out.println("Starting Job " + new Date());
 
         try {
-            DataLabVisualUtil.visualize(job);
+            Future<?> j1 = DataLabVisualUtil.startVisualize(job);
+//            for (int i = 0; i < 20; i++) {
+//                ResourcePool<Connection> p1 = DB_Adapter.createJdbcResourcePool("jdbc:hsqldb:mem:test_db" + new Random().nextInt(100000), null, null, "org.hsqldb.jdbcDriver", 5);
+//                ResourceFactory.addResourcePool(p1);
+//                DataLabListenerGraph.resourceWidgets.addResource(p1.getResourceId());
+//            }
+            j1.get();
         } catch (Exception ex) {
             Logger.getLogger(SimpleDBTest.class.getName()).log(Level.SEVERE, null, ex);
         }

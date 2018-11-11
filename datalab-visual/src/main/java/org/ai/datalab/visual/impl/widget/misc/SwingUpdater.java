@@ -20,6 +20,8 @@ public abstract class SwingUpdater<V> implements Runnable {
 
     private final AtomicBoolean scheduleExecution = new AtomicBoolean(true);
 
+   
+
     public final void publish(V value) {
         ref.set(value);
         if (scheduleExecution.get()) {

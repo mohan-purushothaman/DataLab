@@ -7,10 +7,8 @@ package org.ai.datalab.visual.impl.widget.misc.test;
  */
 
 
-import javax.annotation.Resource;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.ExecutionConfig;
-import org.ai.datalab.core.resource.ResourcePool;
 import org.ai.datalab.core.executor.Reader;
 import org.ai.datalab.core.misc.SimpleData;
 

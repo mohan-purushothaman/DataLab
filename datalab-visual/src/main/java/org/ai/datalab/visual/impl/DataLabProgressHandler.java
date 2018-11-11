@@ -158,8 +158,6 @@ public class DataLabProgressHandler extends SwingUpdater<Void> {
         nodeWidget.setSuccessProgress(String.valueOf(result.getProcessedCount()));
         nodeWidget.setAvg(getTimeString(result.getAvgProcessTime()));
         nodeWidget.setErrorProgress(String.valueOf(errorCount.get()));
-        //TODO resource update using more optimized approach (update based on SCHEDULE or some logic)
-        scene.updateResource(result.getResourceSet());
         DataLabVisualUtil.validateScene(scene);
     }
 

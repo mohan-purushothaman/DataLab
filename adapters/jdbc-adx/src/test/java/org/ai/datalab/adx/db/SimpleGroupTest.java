@@ -13,14 +13,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.ai.datalab.adx.db.DB_Adapter;
-import org.ai.datalab.adx.db.GroupedQueryExecutor;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.resource.Resource;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.resource.ResourceFactory;
 import org.ai.datalab.visual.DataLabVisualUtil;
-import org.ai.datalab.core.adx.misc.ValueConverter;
 import org.ai.datalab.core.resource.ResourcePool;
 
 /*
