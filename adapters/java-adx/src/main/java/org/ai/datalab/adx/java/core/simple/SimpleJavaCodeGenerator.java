@@ -35,15 +35,15 @@ public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
         setPreSection(EXECUTE, generateDeclarations(sampleData));
 
         getCodeSegmentHandler().setCodeSegment(EXECUTE, "//* Type content here*/");
-        
-        setPostSection(EXECUTE, "\n/** Class end  */}}\n");
+
+        setPostSection(EXECUTE, "    \n\n\n\n/** Class end  */}}\n");
     }
 
-    public String getSourceContent(Set<CodeSegment> excludeSegment) {
+    public String getSourceContentExcludingExecute() {
         StringBuilder sb = new StringBuilder(preferredCodeSize());
         for (CodeSegment codeSegment : segmentOrder) {
             sb.append(formatPreValue(pre.get(codeSegment)));
-            if (!excludeSegment.contains(codeSegment)) {
+            if (EXECUTE != codeSegment) {
                 sb.append(formatValue(codeSegmentHandler.getCodeSegment(codeSegment)));
             }
             sb.append(formatPostValue(post.get(codeSegment)));
@@ -53,7 +53,7 @@ public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
 
     public int findExecuteIndex(String content) {
         int lastIndexOf = content.lastIndexOf(getPostSection(EXECUTE));
-        return lastIndexOf -1;
+        return lastIndexOf;
     }
 
     private String generateDeclarations(Data sampleData) {

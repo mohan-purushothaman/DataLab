@@ -9,6 +9,8 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JEditorPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import org.ai.datalab.adx.java.core.JavaExecutorProvider;
@@ -105,8 +107,9 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
     @Override
     public DescriptiveExecutionUnit validateConnector(ProgressHandle handle) throws Exception {
         NbEditorDocument doc = (NbEditorDocument) codePane.getDocument();
-        int index = codeGenerator.findExecuteIndex(codeGenerator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE)));
-        codeGenerator.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, codePane.getText());
+        String content = codePane.getText();
+        int index = codeGenerator.findExecuteIndex(codeGenerator.getSourceContentExcludingExecute());
+        codeGenerator.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, content);
 
         for (ErrorAnnotation e : errorAnnotations) {
             doc.removeAnnotation(e);
@@ -128,7 +131,7 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
                     errorAnnotations.add(new ErrorAnnotation(d1));
                 }
                 for (ErrorAnnotation errorAnnotation : errorAnnotations) {
-                    doc.addAnnotation(doc.createPosition((int) errorAnnotation.getDiagnostic().getPosition()-index), -1, errorAnnotation);
+                    doc.addAnnotation(createPosition(doc, (int) errorAnnotation.getDiagnostic().getPosition() - index), -1, errorAnnotation);
                 }
             }
 
@@ -159,4 +162,8 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
     private javax.swing.JPanel codePanel;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+    private Position createPosition(NbEditorDocument doc, int expectedPosition) throws BadLocationException {
+        return doc.createPosition(Math.max(0, Math.min(expectedPosition, doc.getLength())));
+    }
 }

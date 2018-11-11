@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JProgressBar;
+import java.awt.Color;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Scene;
 import org.ai.datalab.core.resource.ResourceFactory;
@@ -67,7 +68,7 @@ class ResourceWidget extends ComponentWidget {
         bar.setString("    "+resourceId+"    ");
         bar.setStringPainted(true);
         //bar.setForeground(Color.BLACK);
-        //bar.setBackground(Color.WHITE);
+        bar.setBackground(Color.WHITE);
         bar.setOpaque(true);
         //AbbreviatedLabelWidget nameWidget = new AbbreviatedLabelWidget(scene, resourceId);
         //addChild(nameWidget);

@@ -172,6 +172,14 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
         return description;
     }
 
+    @Override
+    public String toString() {
+        return getDescription();
+    }
+    
+    
+    
+
     private ResourcePool getResourcePool() {
         String id = provider.getResourceID();
         if (id != null) {

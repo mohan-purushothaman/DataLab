@@ -41,9 +41,6 @@ import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.visual.impl.DescriptiveSingleMapping;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 import org.mdkt.compiler.CompilationException;
-import org.netbeans.editor.AnnotationDesc;
-import org.netbeans.editor.DocumentUtilities;
-import org.openide.text.Annotation;
 
 /**
  *

@@ -5,6 +5,7 @@
  */
 package org.ai.datalab.core.misc;
 
+import java.util.Random;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.ValueConverter;
 import org.apache.commons.lang.text.StrLookup;
@@ -21,10 +22,18 @@ public class DataUtil {
             suggestedDesc = suggestedDesc.substring(0, 32);
         }
         StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
         for (char c : suggestedDesc.toCharArray()) {
-            if (Character.isJavaIdentifierPart(c) || (Character.isJavaIdentifierStart(c) && sb.length() == 0)) {
-                sb.append(Character.toUpperCase(c));
+            if (isFirst) {
+                if (Character.isJavaIdentifierStart(c)) {
+                    sb.append(Character.toUpperCase(c));
+                }
+            } else {
+                if (Character.isJavaIdentifierPart(c)) {
+                    sb.append(Character.toUpperCase(c));
+                }
             }
+            isFirst = false;
         }
         if (sb.length() == 0) {
             sb.append("NONAME_");
@@ -46,24 +55,46 @@ public class DataUtil {
                 return tempS;
             }
         }
-        return s + Math.round(Math.random());
+        return s + new Random().nextLong();
     }
 
-   
+    public static void validateVariableName(String variableName) throws RuntimeException {
+
+        if (variableName.isEmpty()) {
+            throw new RuntimeException("empty variable name is not allowed");
+        }
+
+        if (variableName.length() > 64) {
+            throw new RuntimeException(variableName + " is more than allowed length of 64");
+        }
+        boolean isFirst = true;
+        for (char c : variableName.toCharArray()) {
+            if (isFirst) {
+                if (!Character.isJavaIdentifierStart(c)) {
+                    throw new RuntimeException(variableName + " is not a valid Java Identifier");
+                }
+            } else {
+                if (!Character.isJavaIdentifierPart(c)) {
+                    throw new RuntimeException(variableName + " is not a valid Java Identifier");
+                }
+            }
+            isFirst = false;
+        }
+    }
 
     public static String getVariableString(String varName) {
         return "${" + varName + "}";
     }
-    
-    public static String substituteData(String s, Data data) throws Exception{
-        return substituteData(s, data,ValueConverter.SIMPLE_STRING_CONVERTER);
+
+    public static String substituteData(String s, Data data) throws Exception {
+        return substituteData(s, data, ValueConverter.SIMPLE_STRING_CONVERTER);
     }
 
-    public static String substituteData(String s, Data data, ValueConverter<Object, String> converter) throws Exception{
+    public static String substituteData(String s, Data data, ValueConverter<Object, String> converter) throws Exception {
         if (data == null) {
             return s;
         }
-   
+
         StrSubstitutor sup = new StrSubstitutor(new StrLookup() {
             @Override
             public String lookup(String key) {
@@ -71,7 +102,7 @@ public class DataUtil {
                     return converter.convert(data.getValue(key));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
-}
+                }
             }
         });
 

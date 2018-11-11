@@ -174,7 +174,7 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
                     throw new WizardValidationException(getPanel(), "details missing", "details missing");
                 }
             } catch (Exception ex) {
-                Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.WARNING));
+                //Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.WARNING));
                 getIterator().setSelectedNode(null);
                 throw new WizardValidationException(getPanel(), ex.getMessage(), ex.getLocalizedMessage());
             } finally {

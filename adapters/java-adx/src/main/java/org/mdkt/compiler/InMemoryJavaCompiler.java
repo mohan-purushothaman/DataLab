@@ -99,7 +99,7 @@ public class InMemoryJavaCompiler {
 				}
 			}
 			if (hasWarnings && !ignoreWarnings || hasErrors) {
-				throw new CompilationException(collector,"compile failed");
+				throw new CompilationException(collector,"compile failed with errors, correct and retry");
 			}
 		}
 

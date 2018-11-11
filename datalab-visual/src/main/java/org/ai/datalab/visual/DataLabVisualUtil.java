@@ -7,11 +7,9 @@ package org.ai.datalab.visual;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import javax.swing.JComponent;
 import org.ai.datalab.core.Data;
 import org.netbeans.api.visual.widget.Scene;
-import org.openide.util.Exceptions;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.visual.impl.DataLabListenerGraph;
 import org.ai.datalab.visual.impl.RunFrame;
@@ -65,7 +63,7 @@ public class DataLabVisualUtil {
         try {
             scene.validate();
         } catch (Exception e) {
-            Exceptions.printStackTrace(Exceptions.attachSeverity(e, Level.INFO));
+            //Exceptions.printStackTrace(Exceptions.attachSeverity(e, Level.INFO));
         }
     }
     

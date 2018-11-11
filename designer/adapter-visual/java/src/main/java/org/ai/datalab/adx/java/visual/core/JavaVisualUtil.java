@@ -6,11 +6,8 @@
 package org.ai.datalab.adx.java.visual.core;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.EnumSet;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,7 +28,6 @@ import org.openide.util.Exceptions;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.adx.java.core.simple.SimpleJavaCodeGenerator;
 import org.ai.datalab.core.adx.CodeSegment;
-import org.netbeans.editor.BaseTextUI;
 
 /**
  *
@@ -134,7 +130,7 @@ public class JavaVisualUtil {
 
             FileObject fob = folder.createData(fileName, "java");
 
-            String content = generator.getSourceContent(EnumSet.of(CodeSegment.EXECUTE));
+            String content = generator.getSourceContentExcludingExecute();
 
             try (OutputStream o = fob.getOutputStream()) {
                 o.write(content.getBytes());

@@ -6,6 +6,7 @@
 package org.ai.datalab.core.adx.misc;
 
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.misc.DataUtil;
 
 /**
  *
@@ -21,9 +22,10 @@ public class SingleMapping<ID> {
     
     private final MappingHelper parent;
 
-    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue,MappingHelper parent) {
+    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue,MappingHelper parent) throws RuntimeException {
         this.adapterID = adapterID;
-        this.fieldKey = fieldKey; //TODO when adding field key it should be normalized
+        this.fieldKey = fieldKey;
+        DataUtil.validateVariableName(fieldKey);
         this.converter = converter == null ? ValueConverter.NO_CONVERTER : converter;
         this.sampleValue=sampleValue;
         this.parent=parent;
