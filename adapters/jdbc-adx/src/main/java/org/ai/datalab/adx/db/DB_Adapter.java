@@ -7,9 +7,7 @@ package org.ai.datalab.adx.db;
 
 import java.sql.Connection;
 import org.ai.datalab.core.AbstractExecutorProvider;
-import org.ai.datalab.core.ExecutorProvider;
 import org.ai.datalab.core.adx.misc.MappingHelper;
-import org.ai.datalab.core.adx.misc.SingleMapping;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.resource.ResourcePool;
 
@@ -19,8 +17,8 @@ import org.ai.datalab.core.resource.ResourcePool;
  */
 public class DB_Adapter {
 
-    public static AbstractExecutorProvider createReader(ResourcePool<Connection> pool, String query, MappingHelper<String> mapping, int fetchSize) {
-        return new DB_Reader(pool, query, mapping, fetchSize);
+    public static AbstractExecutorProvider createReader(ResourcePool<Connection> pool, String query, MappingHelper<String> mapping) {
+        return new DB_Reader(pool, query, mapping);
     }
 
         public static AbstractExecutorProvider createDML_Processor(ResourcePool<Connection> pool, int batchSize, String query, MappingHelper mapping) {

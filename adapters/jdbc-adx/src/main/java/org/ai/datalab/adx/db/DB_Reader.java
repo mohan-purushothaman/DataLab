@@ -26,13 +26,11 @@ import org.ai.datalab.core.resource.ResourcePool;
  *
  * @author Mohan Purushothaman
  */
-public class DB_Reader extends DB_Provider{
+public class DB_Reader extends DB_Provider {
 
-    private int fetchSize;
 
-    DB_Reader(ResourcePool<Connection> pool, String query, MappingHelper<String> mapping, int fetchSize) {
-        super(query,mapping,pool.getResourceId());
-        this.fetchSize = fetchSize;
+    DB_Reader(ResourcePool<Connection> pool, String query, MappingHelper<String> mapping) {
+        super(query, mapping, pool.getResourceId());
     }
 
     @Override
@@ -46,7 +44,7 @@ public class DB_Reader extends DB_Provider{
 
             private Resource<Connection> resource;
             private ResultSet set;
-            private MappingHelper<String> mapping=getMapping();
+            private MappingHelper<String> mapping = getMapping();
 
             @Override
             public Data readData(ExecutionConfig config) throws Exception {
@@ -71,19 +69,18 @@ public class DB_Reader extends DB_Provider{
             @Override
             public void init(ExecutionConfig config) throws Exception {
                 resource = ((ResourcePool<Connection>) config.getResourcePool()).getResource();
+
                 Statement stmt = resource.get().createStatement();
-                stmt.setFetchSize(fetchSize);
                 set = stmt.executeQuery(getQuery());
 
                 //TODO provide this option as properties
-                
-                if ( mapping == null) {
+                if (mapping == null) {
                     mapping = new MappingHelper<>();
                     ResultSetMetaData meta = set.getMetaData();
                     int len = meta.getColumnCount();
                     for (int i = 0; i < len; i++) {
-                        String columnName=meta.getColumnName(i + 1);
-                        mapping.addIdMap(columnName,columnName, null,null);
+                        String columnName = meta.getColumnName(i + 1);
+                        mapping.addIdMap(columnName, columnName, null, null);
                     }
                 }
             }
@@ -98,14 +95,6 @@ public class DB_Reader extends DB_Provider{
         };
     }
 
-   
-    public int getFetchSize() {
-        return fetchSize;
-    }
-
-    public void setFetchSize(int fetchSize) {
-        this.fetchSize = fetchSize;
-    }
 
     @Override
     public boolean isMultiThreadingSupported() {

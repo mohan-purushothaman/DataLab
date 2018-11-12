@@ -65,7 +65,7 @@ public class SimpleDBTest {
                 s.execute("CREATE table testTable( i int, j int)");
                 s.execute("create index testIndex_i on testTable(i)");
             }
-            int noOfRuns = 1000;
+            int noOfRuns = 10;
             int batchSize = 1000;
 
             try (PreparedStatement pstmt = c.prepareStatement("insert into testTable values(?,1)")) {
@@ -82,7 +82,7 @@ public class SimpleDBTest {
 
         ResourceFactory.addResourcePool(p);
 
-        job.setReader("Reader", DB_Adapter.createReader(p, "select i,j from testTable", null, 1000))
+        job.setReader("Reader", DB_Adapter.createReader(p, "select i,j from testTable", null))
                 .addExecutor("Test pro", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=${I} where i=${I}", null))
                 //.setThreadCount(20).getParent().addExecutor("Testing", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=100 where i>97000", null))
                 .setThreadCount(2);

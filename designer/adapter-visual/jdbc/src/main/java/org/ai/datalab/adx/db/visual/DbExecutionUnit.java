@@ -20,7 +20,6 @@ import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
  */
 public class DbExecutionUnit extends DescriptiveExecutionUnit {
 
-    public static final Property FETCH_SIZE = new Property("FETCH_SIZE", "statement fetch size", "fetch size when executing read", Integer.class);
     public static final Property QUERY = new Property("Query", "query", "query used", String.class);
 
     public DbExecutionUnit(String suggestedDescription, AbstractExecutorProvider provider, Data usedInputFields) {
@@ -28,17 +27,11 @@ public class DbExecutionUnit extends DescriptiveExecutionUnit {
 
         if (provider instanceof DB_Reader) {
             DB_Reader r = (DB_Reader) provider;
-            setProperty(FETCH_SIZE, r.getFetchSize(), new PropertyChangeListener<Integer>() {
-                @Override
-                public void valueUpdated(Integer newValue) {
-                    r.setFetchSize(newValue);
-                }
-            });
         }
-        if(provider instanceof DB_Provider){
+        if (provider instanceof DB_Provider) {
             DB_Provider r = (DB_Provider) provider;
             setProperty(QUERY, r.getQuery(), null);
-            
+
         }
 
     }

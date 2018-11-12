@@ -316,6 +316,9 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
                                     <etcConfFile>src/main/resources/my.conf</etcConfFile>
+                    <installerOsLinux>false</installerOsLinux>
+                    <installerOsMacosx>false</installerOsMacosx>
+                    <installerOsSolaris>false</installerOsSolaris>
                 </configuration>
             </plugin>
             <!-- Permits NbModuleSuite to be run in integration-test phase: -->

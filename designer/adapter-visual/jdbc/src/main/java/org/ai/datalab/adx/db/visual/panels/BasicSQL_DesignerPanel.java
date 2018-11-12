@@ -234,7 +234,7 @@ public class BasicSQL_DesignerPanel extends VisualNodeValidator {
     private AbstractExecutorProvider getProvider(ResourcePool<Connection> pool, String query, MappingHelper mapping) {
         switch (type) {
             case READER:
-                return DB_Adapter.createReader(pool, query, mapping, 1);
+                return DB_Adapter.createReader(pool, query, mapping);
             case PROCESSOR:
                 return new DB_Processor(pool, query, mapping);
             case WRITER:

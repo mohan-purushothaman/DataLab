@@ -84,7 +84,7 @@ public class SimpleGroupTest {
         ResourceFactory.addResourcePool(p);
         MappingHelper<String> m = new MappingHelper<>();
         m.addIdMap("test", "X",null,null);
-        job.setReader("Reader", DB_Adapter.createReader(p, "select I,J from testTable", null,1000))
+        job.setReader("Reader", DB_Adapter.createReader(p, "select I,J from testTable", null))
                 .addExecutor("Testing group select", DB_Adapter.createGroupProcessor(p, 1000, "select concat(i,'000') as test,i from testTable where i in ($[I(  ,)])", m, "I", "I")).setThreadCount(20)
                 .addExecutor("Test pro", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=${I}, x=${X} where i=${I}", null)) 
                 //.setThreadCount(20).getParent().addExecutor("Testing", DB_Adapter.createDML_Processor(p, 1000, "update testTable set j=100 where i>97000", null))

@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ai.datalab.core.Data;
@@ -56,7 +55,7 @@ public class MappingHelper<ID> {
 
         for (SingleMapping<ID> singleMapping : idList) {
             try {
-                data.setValue(singleMapping.getFieldKey(), ValueConverter.NO_CONVERTER, singleMapping.getSampleValue());
+                data.setValue(singleMapping.getFieldKey(), singleMapping.getConverter(), singleMapping.getSampleValue());
             } catch (Exception ex) {
                 Logger.getLogger(MappingHelper.class.getName()).log(Level.SEVERE, null, ex);
             }

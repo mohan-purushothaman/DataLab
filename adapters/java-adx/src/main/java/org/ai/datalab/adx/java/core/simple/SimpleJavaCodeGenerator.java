@@ -60,7 +60,7 @@ public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
         StringBuilder sb = new StringBuilder(300);
         for (Entry<String, Object> e : sampleData.getEntrySet()) {
             Type type = TypeUtil.detectType(e.getValue());
-
+            //TODO not a correct way, need to get mapping along instead of data to solve this issue, REDESIGN required
             sb.append("final ").append(type.getClazz().getName()).append(" ").append(e.getKey()).append("=(")
                     .append(type.getClazz().getName()).append(")data.getValue(\"").append(e.getKey()).append("\");\n");
         }
