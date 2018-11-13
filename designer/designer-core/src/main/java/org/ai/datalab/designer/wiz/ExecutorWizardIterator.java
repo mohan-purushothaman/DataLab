@@ -17,6 +17,7 @@ import javax.swing.event.ChangeListener;
 import org.netbeans.api.progress.ProgressHandle;
 import org.openide.WizardDescriptor;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.designer.wiz.panels.ConfigWizard;
@@ -35,13 +36,15 @@ public class ExecutorWizardIterator implements WizardDescriptor.ProgressInstanti
     private WIZARD_PANEL currentPanel;
 
     private final ExecutorType type;
+    private final MappingHelper mapping;
     private final Data sampleInput;
     private final DescriptiveExecutionUnit existingNode;
     private WizardDescriptor wizardDescriptor;
 
-    public ExecutorWizardIterator(ExecutorType type, Data sampleInput, DescriptiveExecutionUnit existingNode) {
+    public ExecutorWizardIterator(ExecutorType type, MappingHelper mapping, DescriptiveExecutionUnit existingNode) {
         this.type = type;
-        this.sampleInput = (sampleInput == null ? new SimpleData() : sampleInput);
+        this.mapping=mapping;
+        this.sampleInput = (mapping == null ? new SimpleData() : mapping.getSampleData());
         this.existingNode = existingNode;
         currentPanel = existingNode==null?TYPE_FILTER_PANEL:INPUT_PANEL;
         initPanel();
@@ -164,6 +167,13 @@ public class ExecutorWizardIterator implements WizardDescriptor.ProgressInstanti
     public Data getSampleInput() {
         return sampleInput;
     }
+
+    public MappingHelper getMapping() {
+        return mapping;
+    }
+    
+    
+    
 
     public DescriptiveExecutionUnit getExistingNode() {
         return existingNode;

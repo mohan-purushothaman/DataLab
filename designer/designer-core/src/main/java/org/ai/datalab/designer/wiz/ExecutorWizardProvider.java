@@ -10,6 +10,7 @@ import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.lookup.ServiceProvider;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.core.ConnectorWizardIteratorInterface;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
@@ -18,12 +19,12 @@ import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
  *
  * @author Mohan Purushothaman
  */
-
 @ServiceProvider(service = ConnectorWizardIteratorInterface.class)
-public class ExecutorWizardProvider implements ConnectorWizardIteratorInterface{
+public class ExecutorWizardProvider implements ConnectorWizardIteratorInterface {
+
     @Override
-    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, Data sampleInput,DescriptiveExecutionUnit existingNode) {
-        ExecutorWizardIterator connectorWizardIterator = new ExecutorWizardIterator(type, sampleInput,existingNode);
+    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, MappingHelper mapping, DescriptiveExecutionUnit existingNode) {
+        ExecutorWizardIterator connectorWizardIterator = new ExecutorWizardIterator(type, mapping, existingNode);
         WizardDescriptor latestWizard = new WizardDescriptor(connectorWizardIterator);
         connectorWizardIterator.setWizardDescriptor(latestWizard);
         // {0} will be replaced by WizardDescriptor.Panel.getComponent().getName()
@@ -35,13 +36,10 @@ public class ExecutorWizardProvider implements ConnectorWizardIteratorInterface{
         }
         return null;
     }
-    
+
     @Override
-    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, Data sampleInput) {
-        return getVisualNode(type, sampleInput,null);
+    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, MappingHelper mapping) {
+        return getVisualNode(type, mapping, null);
     }
-    
-    
-    
 
 }

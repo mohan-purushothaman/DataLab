@@ -61,9 +61,9 @@ public class InputWizard extends WizardPanel implements WizardDescriptor.Extende
         }
         VisualNodeValidator panel;
         if (showEditPanel) {
-            panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput());
+            panel = currentProvider.createEditPanel(iterator.getExistingNode(), iterator.getSampleInput(), iterator.getMapping());
         } else {
-            panel = currentProvider.createProviderPanel(getIterator().getType(), iterator.getSampleInput());
+            panel = currentProvider.createProviderPanel(getIterator().getType(), iterator.getSampleInput(), iterator.getMapping());
         }
 
         fullPanel = new JPanel(new BorderLayout());

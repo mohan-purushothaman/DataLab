@@ -31,14 +31,14 @@ public class ExcelExecutionUnit extends DescriptiveExecutionUnit {
                 public void valueUpdated(Boolean newValue) {
                     r.setHasHeader(newValue);
                 }
-            });
+            }, false);
 
             setProperty(SHEET_NAME, r.getSheetName(), new PropertyChangeListener<String>() {
                 @Override
                 public void valueUpdated(String newValue) {
                     r.setSheetName(newValue);
                 }
-            });
+            }, false);
         }
     }
 

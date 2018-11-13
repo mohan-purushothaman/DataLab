@@ -19,16 +19,16 @@ public class SingleMapping<ID> {
     private String fieldKey;
     private ValueConverter converter;
     private Object sampleValue;
-    
+
     private final MappingHelper parent;
 
-    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue,MappingHelper parent) throws RuntimeException {
+    public SingleMapping(ID adapterID, String fieldKey, ValueConverter converter, Object sampleValue, MappingHelper parent) throws RuntimeException {
         this.adapterID = adapterID;
         this.fieldKey = fieldKey;
         DataUtil.validateVariableName(fieldKey);
         this.converter = converter == null ? ValueConverter.NO_CONVERTER : converter;
-        this.sampleValue=sampleValue;
-        this.parent=parent;
+        this.sampleValue = sampleValue;
+        this.parent = parent;
     }
 
     public Object getSampleValue() {
@@ -59,14 +59,9 @@ public class SingleMapping<ID> {
         this.converter = converter;
     }
 
-  
-
     public MappingHelper getParent() {
         return parent;
     }
-    
-    
-    
 
     public void map(ValueMapper<ID> val, Data data) throws Exception {
 
@@ -77,4 +72,4 @@ public class SingleMapping<ID> {
         }
     }
 
-}
+   }

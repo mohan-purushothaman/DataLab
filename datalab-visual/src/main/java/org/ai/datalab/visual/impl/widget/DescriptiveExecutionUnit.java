@@ -28,6 +28,7 @@ import org.ai.datalab.core.misc.SimpleData;
 import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.FixedData;
 import org.ai.datalab.visual.DataLabVisualUtil;
+import org.netbeans.api.actions.Editable;
 
 /**
  *
@@ -115,7 +116,8 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
 
         Sheet.Set set = Sheet.createPropertiesSet();
         for (Property p : getProperties().keySet()) {
-            set.put(new PropertySupport.ReadWrite(p.getName(), p.getClazz(), p.getDescription(), p.getShortDesc()) {
+            
+            set.put(new PropertySupport(p.getName(), p.getClazz(), p.getDescription(), p.getShortDesc(),true,!isReadOnly(p.getName())) {
                 @Override
                 public Object getValue() throws IllegalAccessException, InvocationTargetException {
                     return getProperty(p);
@@ -164,22 +166,7 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
                     setSuggestedDescription(val);
                 }
             });
-//
-//            Node.Property threadCount = getPropertyImpl(PrimitiveBlock.THREAD_COUNT, Integer.class, !(provider.getProvidingType() == Reader.class || provider.getProvidingType() == Writer.class));
-//            //Node.Property readerTimeout = getPropertyImpl(PrimitiveBlock.READER_TIMEOUT_IN_SECONDS, String.class, false);
-//            //Node.Property processTimeout = getPropertyImpl(PrimitiveBlock.PROCESSING_TIMEOUT_IN_SECONDS, String.class, false);
-//
-//            if (provider.getProvidingType() == Reader.class) {
-//                //TODO implement startindex and endindex for readers
-//            }
 
-//            threadCount.setName("Threads to use");
-//            readerTimeout.setName("Input timeout in seconds");
-//            processTimeout.setName("Processing timeout");
-//
-//            set.put(readerTimeout);
-//            set.put(threadCount);
-//            set.put(processTimeout);
             set.setName("Properties");
             String tabName = "Details";
             set.setValue("tabName", tabName);
@@ -200,39 +187,10 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
         return props.toArray(new Sheet.Set[0]);
     }
 
-    public Node.Property getPropertyImpl(final Property property, Class type, final boolean canWrite) {
-//        if (getProperty(propertyName) == null) {
-//            setProperty(propertyName, JobUtil.getDefaultValue(propertyName));
-//        }
-        return new Node.Property(type) {
-
-            @Override
-            public boolean canRead() {
-                return true;
-            }
-
-            @Override
-            public Object getValue() throws IllegalAccessException, InvocationTargetException {
-                return getProperty(property);
-            }
-
-            @Override
-            public boolean canWrite() {
-                return canWrite;
-            }
-
-            @Override
-            public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-                setProperty(property, val);
-            }
-        };
-    }
-
     @Override
     public final void firePropertyChanged(String name, Object value) {
-        if (graphScene != null) {
-            //TODO modified logic
-            //graphScene.setModified();
+        if (graphScene != null && graphScene instanceof Editable) {
+            ((Editable)graphScene).edit();
         }
     }
 

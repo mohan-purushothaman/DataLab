@@ -5,7 +5,7 @@
  */
 package org.ai.datalab.designer.core;
 
-import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
@@ -14,7 +14,7 @@ import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
  * @author Mohan Purushothaman
  */
 public interface ConnectorWizardIteratorInterface {
-    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, Data sampleInput,DescriptiveExecutionUnit executionUnit);
+    public DescriptiveExecutionUnit getVisualNode(ExecutorType type, MappingHelper mapping,DescriptiveExecutionUnit executionUnit);
 
-    public DescriptiveExecutionUnit getVisualNode(ExecutorType executorType, Data simpleData);
+    public DescriptiveExecutionUnit getVisualNode(ExecutorType executorType, MappingHelper mapping);
 }

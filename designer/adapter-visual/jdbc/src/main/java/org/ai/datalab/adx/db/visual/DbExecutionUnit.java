@@ -11,7 +11,6 @@ import org.ai.datalab.adx.db.DB_Reader;
 import org.ai.datalab.core.AbstractExecutorProvider;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.misc.Property;
-import org.ai.datalab.core.misc.PropertyChangeListener;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 
 /**
@@ -25,13 +24,10 @@ public class DbExecutionUnit extends DescriptiveExecutionUnit {
     public DbExecutionUnit(String suggestedDescription, AbstractExecutorProvider provider, Data usedInputFields) {
         super(suggestedDescription, provider, usedInputFields);
 
-        if (provider instanceof DB_Reader) {
-            DB_Reader r = (DB_Reader) provider;
-        }
+       
         if (provider instanceof DB_Provider) {
             DB_Provider r = (DB_Provider) provider;
-            setProperty(QUERY, r.getQuery(), null);
-
+            setProperty(QUERY, r.getQuery(), null,true);
         }
 
     }

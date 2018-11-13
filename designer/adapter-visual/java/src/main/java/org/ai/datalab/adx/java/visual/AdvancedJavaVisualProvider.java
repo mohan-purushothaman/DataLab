@@ -15,6 +15,7 @@ import org.ai.datalab.adx.java.core.adv.JavaProcessorCodeGenerator;
 import org.ai.datalab.adx.java.core.adv.JavaReaderCodeGenerator;
 import org.ai.datalab.adx.java.core.adv.JavaWriterCodeGenerator;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
@@ -28,13 +29,13 @@ import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 public class AdvancedJavaVisualProvider extends VisualNodeProvider {
 
     @Override
-    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
+    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
 
         return new JavaConnectorPanel(getGenerator(type), type, sampleInput);
     }
 
     @Override
-    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         JavaCodeGenerator gen = (JavaCodeGenerator) ((JavaExecutorProvider) unit.getExecutorProvider()).getCodeGenerator();
         return new JavaConnectorPanel(gen, unit.getProvidingType(), sampleInput);
     }

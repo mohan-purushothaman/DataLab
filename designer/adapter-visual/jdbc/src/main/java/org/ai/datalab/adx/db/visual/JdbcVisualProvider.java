@@ -11,6 +11,7 @@ import org.openide.util.lookup.ServiceProvider;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.adx.db.visual.panels.BasicSQL_DesignerPanel;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
@@ -27,12 +28,12 @@ public class JdbcVisualProvider extends VisualNodeProvider {
     }
     
       @Override
-    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         return new BasicSQL_DesignerPanel(unit,unit.getProvidingType(), sampleInput);
     }
 
     @Override
-    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
+    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
         return new BasicSQL_DesignerPanel(null,type, sampleInput);
     }
 

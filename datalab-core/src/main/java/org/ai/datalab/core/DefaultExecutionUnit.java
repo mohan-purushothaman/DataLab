@@ -131,7 +131,7 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
                 }
         }
 
-        setProperty(Property.THREAD_COUNT, threadCount);
+        setProperty(Property.THREAD_COUNT, threadCount,null,!provider.isMultiThreadingSupported());
         return this;
     }
 //

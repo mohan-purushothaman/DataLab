@@ -6,6 +6,7 @@
 package org.ai.datalab.adx.java.core.simple;
 
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 
 /**
  *
@@ -13,10 +14,10 @@ import org.ai.datalab.core.Data;
  */
 public class SimpleJavaProcessorCodeGenerator extends SimpleJavaCodeGenerator {
 
-    public SimpleJavaProcessorCodeGenerator(Data sampleData) {
+    public SimpleJavaProcessorCodeGenerator(MappingHelper mapping) {
         super("test.SimpleJavaProcessor", "import org.ai.datalab.core.executor.impl.SimpleUpdateProcessor;", "public class SimpleJavaProcessor extends SimpleUpdateProcessor {\n"
                 + "    @Override\n"
-                + "    public void updateData(Data data, ExecutionConfig config) throws Exception {\n", sampleData);
+                + "    public void updateData(Data data, ExecutionConfig config) throws Exception {\n", mapping);
 
     }
 

@@ -11,6 +11,8 @@ import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.CodeSegment;
 import static org.ai.datalab.core.adx.CodeSegment.*;
+import org.ai.datalab.core.adx.misc.MappingHelper;
+import org.ai.datalab.core.adx.misc.SingleMapping;
 import org.ai.datalab.core.misc.Type;
 import org.ai.datalab.core.misc.TypeUtil;
 
@@ -20,7 +22,7 @@ import org.ai.datalab.core.misc.TypeUtil;
  */
 public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
 
-    public SimpleJavaCodeGenerator(String clazzName, String extraImport, String method, Data sampleData) {
+    public SimpleJavaCodeGenerator(String clazzName, String extraImport, String method,MappingHelper mapping) {
         super(clazzName, IMPORT_DECLARATION, EXECUTE);
 
         setPreSection(IMPORT_DECLARATION, "package test;\n"
@@ -32,7 +34,7 @@ public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
 
         setPostSection(IMPORT_DECLARATION, method);
 
-        setPreSection(EXECUTE, generateDeclarations(sampleData));
+        setPreSection(EXECUTE, generateDeclarations(mapping));
 
         getCodeSegmentHandler().setCodeSegment(EXECUTE, "//* Type content here*/");
 
@@ -56,13 +58,13 @@ public class SimpleJavaCodeGenerator extends JavaCodeGenerator {
         return lastIndexOf;
     }
 
-    private String generateDeclarations(Data sampleData) {
+    private String generateDeclarations(MappingHelper mapping) {
         StringBuilder sb = new StringBuilder(300);
-        for (Entry<String, Object> e : sampleData.getEntrySet()) {
-            Type type = TypeUtil.detectType(e.getValue());
-            //TODO not a correct way, need to get mapping along instead of data to solve this issue, REDESIGN required
-            sb.append("final ").append(type.getClazz().getName()).append(" ").append(e.getKey()).append("=(")
-                    .append(type.getClazz().getName()).append(")data.getValue(\"").append(e.getKey()).append("\");\n");
+        for (Object o : mapping.getIdList(null)) {
+            SingleMapping s=(SingleMapping) o;
+            Type type=s.getConverter().getResultType();
+            sb.append("final ").append(type.getClazz().getName()).append(" ").append(s.getFieldKey()).append("=(")
+                    .append(type.getClazz().getName()).append(")data.getValue(\"").append(s.getFieldKey()).append("\");\n");
         }
         return sb.toString();
     }

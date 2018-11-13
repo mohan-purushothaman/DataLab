@@ -15,6 +15,8 @@ import org.ai.datalab.adx.java.core.JavaExecutorProvider;
 import org.ai.datalab.adx.java.core.simple.SimpleJavaProcessorCodeGenerator;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.CodeSegment;
+import org.ai.datalab.core.adx.misc.MappingHelper;
+import org.ai.datalab.core.adx.misc.ValueConverter;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Reader;
 import org.ai.datalab.core.executor.impl.OneToOneDataProcessor;
@@ -55,19 +57,19 @@ public class JavaCompileTest {
     @Test
     public void testSimpleExecutor() throws Exception {
 
-        Data data = new SimpleData();
+        MappingHelper mapping = new MappingHelper();
         StringBuilder sb = new StringBuilder();
         for (Type t : Type.values()) {
-            data.setValue("_" + t.name(), t.getSampleValue());
+            mapping.addIdMap("", "_" + t.name(), t.getConverter(), t.getSampleValue());
 
             sb.append("if(Objects.equals(_").append(t.name()).append(",data.getValue(\"_").append(t.name()).append("\"))){")
                     .append("data.setValue(\"_").append(t.name()).append("\",\"").append(t.name()).append("\");}\n");
 
         }
 
-        JavaCodeGenerator gen = new SimpleJavaProcessorCodeGenerator(data);
+        JavaCodeGenerator gen = new SimpleJavaProcessorCodeGenerator(mapping);
         gen.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, sb.toString());
-        
+
         JavaExecutorProvider pro = new JavaExecutorProvider(ExecutorType.PROCESSOR, gen, null);
 
         try {

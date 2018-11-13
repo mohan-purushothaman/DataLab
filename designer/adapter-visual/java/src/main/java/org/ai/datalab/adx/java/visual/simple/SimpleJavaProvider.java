@@ -12,6 +12,7 @@ import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.adx.java.core.JavaExecutorProvider;
 import org.ai.datalab.adx.java.visual.JavaExecutionUnit;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
@@ -26,13 +27,13 @@ import org.openide.util.lookup.ServiceProvider;
 public class SimpleJavaProvider extends VisualNodeProvider {
 
     @Override
-    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
+    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
 
-        return new SimpleJavaConnectorPanel(getGenerator(type, sampleInput), type, sampleInput);
+        return new SimpleJavaConnectorPanel(getGenerator(type, sampleInput,inputMapping), type, sampleInput);
     }
 
     @Override
-    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         SimpleJavaCodeGenerator gen = (SimpleJavaCodeGenerator) ((JavaExecutorProvider) unit.getExecutorProvider()).getCodeGenerator();
         return new SimpleJavaConnectorPanel(gen, unit.getProvidingType(), sampleInput);
     }
@@ -47,16 +48,16 @@ public class SimpleJavaProvider extends VisualNodeProvider {
         return EnumSet.of(ExecutorType.PROCESSOR, ExecutorType.WRITER, ExecutorType.CONDITION);
     }
 
-    private SimpleJavaCodeGenerator getGenerator(ExecutorType type, Data sampleInput) {
+    private SimpleJavaCodeGenerator getGenerator(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
         switch (type) {
             case READER:
                 return null;
             case PROCESSOR:
-                return new SimpleJavaProcessorCodeGenerator(sampleInput);
+                return new SimpleJavaProcessorCodeGenerator(inputMapping);
             case CONDITION:
-                return new SimpleJavaConditionCodeGenerator(sampleInput);
+                return new SimpleJavaConditionCodeGenerator(inputMapping);
             case WRITER:
-                return new SimpleJavaWriterCodeGenerator(sampleInput);
+                return new SimpleJavaWriterCodeGenerator(inputMapping);
         }
         throw new UnsupportedOperationException(type + " not available");
     }

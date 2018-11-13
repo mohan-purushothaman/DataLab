@@ -28,25 +28,20 @@ public class FileExecutionUnit extends DescriptiveExecutionUnit {
         super(suggestedDescription, provider, usedInputFields);
         if (provider instanceof File_Provider) {
             File_Provider r = (File_Provider) provider;
-            setProperty(FILE_NAME, r.getResourceID(), null);
+            setProperty(FILE_NAME, r.getResourceID(), null,true);
             setProperty(BUFFER_SIZE, r.getBufferSize(), new PropertyChangeListener<Integer>() {
                 @Override
                 public void valueUpdated(Integer newValue) {
                     r.setBufferSize(newValue);
                 }
-            });
+            },false);
             setProperty(HAS_HEADER, r.hasHeader(), new PropertyChangeListener<Boolean>() {
                 @Override
                 public void valueUpdated(Boolean newValue) {
                     r.setHasHeader(newValue);
                 }
-            });
-            setProperty(DATA_FORMAT, r.getLineFormat(), new PropertyChangeListener<String>() {
-                @Override
-                public void valueUpdated(String newValue) {
-                    r.setLineFormat(newValue);
-                }
-            });
+            },false);
+            setProperty(DATA_FORMAT, r.getLineFormat(), null,true);
         }
     }
 

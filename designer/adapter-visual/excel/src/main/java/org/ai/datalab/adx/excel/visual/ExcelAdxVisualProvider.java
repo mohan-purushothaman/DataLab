@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import org.openide.util.lookup.ServiceProvider;
 import org.ai.datalab.core.Data;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.panels.VisualNodeProvider;
 import org.ai.datalab.designer.panels.VisualNodeValidator;
@@ -22,7 +23,7 @@ import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
 public class ExcelAdxVisualProvider extends VisualNodeProvider {  
 
     @Override
-    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput) {
+    public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
         return new ExcelConnectorPanel(null,type, sampleInput);
     }
 
@@ -37,7 +38,7 @@ public class ExcelAdxVisualProvider extends VisualNodeProvider {
     }
 
     @Override
-    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput) {
+    public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         return new ExcelConnectorPanel(unit,unit.getProvidingType(), sampleInput);
     }
 }

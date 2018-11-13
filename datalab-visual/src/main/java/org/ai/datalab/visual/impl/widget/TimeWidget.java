@@ -6,17 +6,13 @@
 package org.ai.datalab.visual.impl.widget;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JProgressBar;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.Scene;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -24,17 +20,17 @@ import org.openide.util.Exceptions;
  */
 public class TimeWidget extends ComponentWidget {
 
-    static {
-        try {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResourceAsStream("Digital-7.ttf"));
-            font = font.deriveFont(Font.BOLD, 28);
-
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    static {
+//        try {
+//            Font font = Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResourceAsStream("Digital-7.ttf"));
+//            font = font.deriveFont(Font.BOLD, 28);
+//
+//            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//            ge.registerFont(font);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private final AtomicReference<Instant> startTime = new AtomicReference<>();
 

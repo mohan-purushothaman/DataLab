@@ -16,9 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -52,6 +55,9 @@ import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.InstanceContent;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.DataJob;
+import org.ai.datalab.core.adx.misc.MappingHelper;
+import org.ai.datalab.core.adx.misc.SingleMapping;
+import org.ai.datalab.core.adx.misc.ValueConverter;
 import org.ai.datalab.core.builder.ConditionExecutionUnit;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
@@ -73,7 +79,7 @@ import org.ai.datalab.visual.DataLabVisualUtil;
  *
  * @author Mohan Purushothaman
  */
-public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, FlowEdge> {
+public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, FlowEdge> implements Editable{
 
     private final LayerWidget backgroundLayer = new LayerWidget(this);
     private final LayerWidget mainLayer = new LayerWidget(this);
@@ -132,8 +138,13 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
     }
 
     public void setModified() {
+        edit();
+    }
+    
+    public void edit(){
         editable.edit();
     }
+    
 
     public UndoRedo getUndoRedo() {
         return manager;
@@ -303,7 +314,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 //TODO
                 //GraphUtil.getWholeDataAfter(DataLabGraphDesigner.this, node)
                 DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
-                        .getVisualNode(ExecutorType.PROCESSOR, FixedData.getFixedData(node.getFinalOutputData()));
+                        .getVisualNode(ExecutorType.PROCESSOR, getFullOutputMapping(node));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -318,7 +329,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
             @Override
             public void actionPerformed(ActionEvent e) {
                 DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
-                        .getVisualNode(ExecutorType.WRITER, FixedData.getFixedData(node.getFinalOutputData()));
+                        .getVisualNode(ExecutorType.WRITER, getFullOutputMapping(node));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -333,7 +344,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
             @Override
             public void actionPerformed(ActionEvent e) {
                 DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class)
-                        .getVisualNode(ExecutorType.CONDITION, FixedData.getFixedData(node.getFinalOutputData()));
+                        .getVisualNode(ExecutorType.CONDITION, getFullOutputMapping(node));
                 if (visualNode != null) {
                     ExecutionUnitWidget widget = DataLabGraphDesigner.this.createNode(visualNode, localLocation.x, localLocation.y + 100, node, flowCondition);
                     layoutScene();
@@ -365,8 +376,9 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                DescriptiveExecutionUnit parent = (DescriptiveExecutionUnit) node.getParent();
 
-                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(node.getProvidingType(), node.getInputFields(), node);
+                DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(node.getProvidingType(), getFullOutputMapping(parent), node);
                 if (visualNode != null) {
                     replaceNode(node, visualNode);
                     layoutScene();
@@ -374,6 +386,36 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
             }
 
         };
+    }
+
+    private MappingHelper getFullOutputMapping(DescriptiveExecutionUnit node) {
+        if (node == null) {
+            return null;
+        }
+
+        Map<String, SingleMapping> mapping = new HashMap<>();
+        DescriptiveExecutionUnit currentNode = node;
+        while (currentNode != null) {
+
+            MappingHelper m = currentNode.getMapping();
+
+            if (m != null) {
+                for (Object temp : m.getIdList(null)) {
+                    SingleMapping s = (SingleMapping) temp;
+                    if (!mapping.containsKey(s.getFieldKey())) {
+                        mapping.put(s.getFieldKey(), s);
+                    }
+                }
+            }
+
+            currentNode = (DescriptiveExecutionUnit) node.getParent();
+        }
+        MappingHelper mappingHelper = new MappingHelper();
+
+        for (SingleMapping s : mapping.values()) {
+            mappingHelper.addIdMap("", s.getFieldKey(), s.getConverter(), s.getSampleValue());
+        }
+        return mappingHelper;
     }
 
     private void replaceNode(DescriptiveExecutionUnit node, DescriptiveExecutionUnit visualNode) {

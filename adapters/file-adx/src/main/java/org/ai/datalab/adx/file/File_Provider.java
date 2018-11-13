@@ -16,8 +16,8 @@ public abstract class File_Provider extends AbstractExecutorProvider {
 
     private int bufferSize;
     private boolean hasHeader;
-    private String lineFormat;
-    private String quoteString;
+    private final String lineFormat;
+    private final String quoteString;
 
     public File_Provider(MappingHelper mapping, String resourceId, int bufferSize, boolean hasHeader, String lineFormat,String quoteString) {
         super(mapping, resourceId);
@@ -47,19 +47,11 @@ public abstract class File_Provider extends AbstractExecutorProvider {
         this.hasHeader = hasHeader;
     }
 
-    public void setLineFormat(String lineFormat) {
-        this.lineFormat = lineFormat;
-    }
-
     public String getQuoteString() {
         return quoteString;
     }
 
-    public void setQuoteString(String quoteString) {
-        this.quoteString = quoteString;
-    }
-
-    
+  
     
      @Override
     public final boolean isMultiThreadingSupported() {
