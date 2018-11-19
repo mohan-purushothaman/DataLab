@@ -325,11 +325,6 @@
             <version>RELEASE82</version>
         </dependency>
         <dependency>
-            <groupId>org.mdkt.compiler</groupId>
-            <artifactId>InMemoryJavaCompiler</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-java-classpath</artifactId>
             <version>RELEASE82</version>

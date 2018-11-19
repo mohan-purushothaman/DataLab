@@ -29,6 +29,7 @@
             </exclusions>
         </dependency>
         
+        
         <dependency>
             <groupId>org.netbeans.cluster</groupId>
             <artifactId>java</artifactId>
@@ -58,6 +59,10 @@
                 <exclusion>
                     <groupId>org.netbeans.modules</groupId>
                     <artifactId>org-netbeans-modules-performance-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.netbeans.modules</groupId>
+                    <artifactId>org.netbeans.modules.java.j2seproject</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
