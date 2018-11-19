@@ -7,6 +7,7 @@ package org.ai.datalab.designer.project;
 
 import java.awt.Image;
 import javax.swing.Action;
+import org.netbeans.spi.project.ui.RecommendedTemplates;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -18,12 +19,13 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author Mohan
  */
-public class DataLabProjectNode extends FilterNode{
+public class DataLabProjectNode extends FilterNode {
+
     private final DataLabProject project;
 
-    public DataLabProjectNode(Node node,DataLabProject project) {
-        super(node, new FilterNode.Children(node),new ProxyLookup(new Lookup[]{Lookups.fixed(node,project),node.getLookup()}));
-        this.project=project;
+    public DataLabProjectNode(Node node, DataLabProject project) {
+        super(node, new FilterNode.Children(node), new ProxyLookup(new Lookup[]{Lookups.fixed(node, project), node.getLookup()}));
+        this.project = project;
     }
 
     @Override
@@ -36,9 +38,6 @@ public class DataLabProjectNode extends FilterNode{
         };
     }
 
-   
-    
-
     @Override
     public Image getOpenedIcon(int type) {
         return getIcon(type);
@@ -46,7 +45,7 @@ public class DataLabProjectNode extends FilterNode{
 
     @Override
     public Image getIcon(int type) {
-       return project.getProjectInfo().getIcon().getImage();
+        return project.getProjectInfo().getIcon().getImage();
     }
 
     @Override
@@ -54,8 +53,4 @@ public class DataLabProjectNode extends FilterNode{
         return project.getProjectInfo().getDisplayName();
     }
 
-    
-    
-    
-    
 }

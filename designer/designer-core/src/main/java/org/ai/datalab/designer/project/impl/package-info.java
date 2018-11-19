@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-@TemplateRegistration(folder = "DataLab", content = "DataLabTemplate.xml", requireProject = false,displayName = "New DataLab file" )
+@TemplateRegistration(folder = "DataLab",content = "DataLabTemplate.xml", requireProject = false,displayName = "New DataLab file" )
 package org.ai.datalab.designer.project.impl;
 
 import org.netbeans.api.templates.TemplateRegistration; 

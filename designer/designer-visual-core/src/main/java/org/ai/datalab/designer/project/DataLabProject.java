@@ -8,6 +8,8 @@ package org.ai.datalab.designer.project;
 import java.io.IOException;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.ui.PrivilegedTemplates;
+import org.netbeans.spi.project.ui.RecommendedTemplates;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -39,9 +41,6 @@ public class DataLabProject implements Project {
     public ProjectInfo getProjectInfo() {
         return projectInfo;
     }
-    
-    
-    
 
     @Override
     public FileObject getProjectDirectory() {
@@ -57,7 +56,12 @@ public class DataLabProject implements Project {
         if (lkp == null) {
             lkp = Lookups.fixed(new Object[]{
                 projectInfo,
-                    new ViewProvider(this)
+                new ViewProvider(this), new PrivilegedTemplates () {
+                    @Override
+                    public String[] getPrivilegedTemplates() {
+                        return new String[]{"Templates/DataLab/DataLabTemplate.xml"};
+                    }
+                }
             });
 
         }

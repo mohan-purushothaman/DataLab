@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 // TODO define position attribute
-@TemplateRegistration(folder = "Project/Import", displayName = "#DataLab_displayName", description = "DataLabDescription.html", iconBase = "org/ai/datalab/designer/project/datalab.gif", content = "DataLabProject.zip")
+@TemplateRegistration(folder = "Project/DataLab", displayName = "#DataLab_displayName", description = "DataLabDescription.html", iconBase = "org/ai/datalab/designer/project/datalab.gif", content = "DataLabProject.zip")
 @Messages("DataLab_displayName=DataLab Project")
 public class DataLabWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
 
