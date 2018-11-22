@@ -8,6 +8,7 @@ package org.ai.datalab.adx.java.visual.simple;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.JEditorPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
@@ -33,6 +34,7 @@ import org.mdkt.compiler.CompilationException;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.modules.editor.NbEditorDocument;
 import org.openide.text.Annotation;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -112,7 +114,11 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
         codeGenerator.getCodeSegmentHandler().setCodeSegment(CodeSegment.EXECUTE, content);
 
         for (ErrorAnnotation e : errorAnnotations) {
-            doc.removeAnnotation(e);
+            try {
+                doc.removeAnnotation(e);
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.INFO));
+            }
         }
         errorAnnotations.clear();
         try {
@@ -164,6 +170,6 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
     // End of variables declaration//GEN-END:variables
 
     private Position createPosition(NbEditorDocument doc, int expectedPosition) throws BadLocationException {
-        return doc.createPosition(Math.max(0, Math.min(expectedPosition, doc.getLength())));
+        return doc.createPosition(Math.max(0, Math.min(expectedPosition, doc.getLength()-1)));
     }
 }

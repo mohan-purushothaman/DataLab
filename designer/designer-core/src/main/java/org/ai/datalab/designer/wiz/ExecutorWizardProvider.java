@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.lookup.ServiceProvider;
-import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.designer.core.ConnectorWizardIteratorInterface;

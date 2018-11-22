@@ -174,6 +174,10 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         Anchor sourceAnchor = GraphUtil.getSourceAnchor(edge, sourceNodeWidget);
         ConnectionWidget edgeWidget = (ConnectionWidget) findWidget(edge);
         edgeWidget.setSourceAnchor(sourceAnchor);
+        DescriptiveExecutionUnit edgeTarget = getEdgeTarget(edge);
+        if(edgeTarget!=null){
+            edgeTarget.setParent(sourceNode);
+        }
     }
 
     @Override
@@ -195,8 +199,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         widget.setPreferredLocation(new Point(x, y));
         //visualNode.prepareWidget(this, widget);
         if (parent != null) {
-            //TODO correct
-            //GraphUtil.getWholeDataAfter(this, parent),
+            executionUnit.setParent(parent);
             FlowEdge edge = new FlowEdge(flowCondition, parent.getFinalOutputData());
             addEdge(edge);
             setEdgeSource(edge, parent);

@@ -5,7 +5,6 @@
  */
 package org.ai.datalab.core;
 
-import java.io.PrintWriter;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.misc.ConsoleJobListener;
 

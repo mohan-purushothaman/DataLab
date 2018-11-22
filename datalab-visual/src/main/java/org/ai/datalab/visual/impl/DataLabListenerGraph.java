@@ -125,6 +125,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         IOSelect.select(io, EnumSet.of(IOSelect.AdditionalOperation.OPEN));
 
         addListeners();
+        getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(createObjectHoverAction());
         getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         handle = ProgressHandleFactory.createHandle(jobName, new Cancellable() {

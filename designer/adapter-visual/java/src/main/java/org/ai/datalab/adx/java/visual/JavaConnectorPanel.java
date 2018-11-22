@@ -13,10 +13,13 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import org.netbeans.api.progress.ProgressHandle;
@@ -181,10 +184,14 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         JavaVisualUtil.populateGenerator(doc, codeGenerator);
 
         for (ErrorAnnotation e : errorAnnotations) {
-            doc.removeAnnotation(e);
+            try {
+                doc.removeAnnotation(e);
+            } catch (Exception ex) {
+                 Exceptions.printStackTrace(Exceptions.attachSeverity(ex, Level.INFO));
+            }
         }
         errorAnnotations.clear();
-        
+
         try {
             Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codePane.getText(), codeGenerator.getLibList()); // need to pass text editor content for line matching
             Executor e = clazz.newInstance();
@@ -201,7 +208,7 @@ public class JavaConnectorPanel extends VisualNodeValidator {
                     errorAnnotations.add(new ErrorAnnotation(d1));
                 }
                 for (ErrorAnnotation errorAnnotation : errorAnnotations) {
-                    doc.addAnnotation(doc.createPosition((int) errorAnnotation.getDiagnostic().getPosition()), -1, errorAnnotation);
+                    doc.addAnnotation(createPosition(doc, (int) errorAnnotation.getDiagnostic().getPosition()), -1, errorAnnotation);
                 }
             }
 
@@ -261,5 +268,9 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Position createPosition(NbEditorDocument doc, int expectedPosition) throws BadLocationException {
+        return doc.createPosition(Math.max(0, Math.min(expectedPosition, doc.getLength() - 1)));
     }
 }
