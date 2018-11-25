@@ -31,13 +31,13 @@ public class AdvancedJavaVisualProvider extends VisualNodeProvider {
     @Override
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
 
-        return new JavaConnectorPanel(getGenerator(type), type, sampleInput);
+        return new JavaConnectorPanel(getGenerator(type), type, sampleInput,inputMapping);
     }
 
     @Override
     public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         JavaCodeGenerator gen = (JavaCodeGenerator) ((JavaExecutorProvider) unit.getExecutorProvider()).getCodeGenerator();
-        return new JavaConnectorPanel(gen, unit.getProvidingType(), sampleInput);
+        return new JavaConnectorPanel(gen, unit.getProvidingType(), sampleInput,inputMapping);
     }
 
     @Override

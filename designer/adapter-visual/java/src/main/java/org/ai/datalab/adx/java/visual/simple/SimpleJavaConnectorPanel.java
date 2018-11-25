@@ -24,6 +24,7 @@ import org.ai.datalab.adx.java.visual.core.JavaVisualUtil;
 import org.ai.datalab.core.Data;
 import org.ai.datalab.core.Executor;
 import org.ai.datalab.core.adx.CodeSegment;
+import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.executor.Processor;
 import org.ai.datalab.core.executor.Reader;
@@ -46,13 +47,15 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
     private final Data sampleInput;
     private final SimpleJavaCodeGenerator codeGenerator;
     private final String className;
+    private final MappingHelper sampleMapping;
 
     private final JEditorPane codePane;
 
-    public SimpleJavaConnectorPanel(SimpleJavaCodeGenerator generator, ExecutorType type, Data sampleInput) {
+    public SimpleJavaConnectorPanel(SimpleJavaCodeGenerator generator, ExecutorType type, Data sampleInput,MappingHelper sampleMapping) {
         this.type = type;
         this.sampleInput = sampleInput;
         this.codeGenerator = generator;
+        this.sampleMapping=sampleMapping;
         this.className = JavaUtil.getFileName(codeGenerator.getClazzName());
         initComponents();
         codePane = JavaVisualUtil.getLatestEditor();
@@ -125,7 +128,7 @@ public class SimpleJavaConnectorPanel extends VisualNodeValidator {
             Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codeGenerator.generate(), codeGenerator.getLibList());
             Executor e = clazz.newInstance();
             Data sampleOutput = getSampleData(e);
-            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : JavaConnectorPanel.getDummyMapping(sampleOutput));
+            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : JavaVisualUtil.getOutputMapping(sampleOutput,sampleMapping));
 
             return new SimpleJavaExecutionUnit("simple java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
         } catch (CompilationException e) {

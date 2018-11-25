@@ -7,8 +7,10 @@ package org.ai.datalab.core.adx.misc;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ai.datalab.core.Data;
@@ -63,6 +65,17 @@ public class MappingHelper<ID> {
         return data;
     }
 
-    
+    public final static Map<String, SingleMapping> getMapping(MappingHelper<?> m) {
+        if (m == null) {
+            return null;
+        }
+        Map<String, SingleMapping> map = new HashMap<>();
+
+        for (SingleMapping<?> s : m.idList) {
+            map.put(s.getFieldKey(), s);
+        }
+
+        return map;
+    }
 
 }

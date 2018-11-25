@@ -8,6 +8,7 @@ package org.ai.datalab.adx.java.visual.core;
 import java.awt.BorderLayout;
 import java.io.OutputStream;
 import java.util.EnumSet;
+import java.util.Map;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,7 +28,13 @@ import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.ai.datalab.adx.java.JavaCodeGenerator;
 import org.ai.datalab.adx.java.core.simple.SimpleJavaCodeGenerator;
+import org.ai.datalab.core.Data;
 import org.ai.datalab.core.adx.CodeSegment;
+import org.ai.datalab.core.adx.misc.MappingHelper;
+import org.ai.datalab.core.adx.misc.SingleMapping;
+import org.ai.datalab.core.misc.Type;
+import org.ai.datalab.core.misc.TypeUtil;
+import org.ai.datalab.visual.impl.DescriptiveSingleMapping;
 
 /**
  *
@@ -156,6 +163,21 @@ public class JavaVisualUtil {
             return p;
         }
 
+    }
+
+    public static MappingHelper getOutputMapping(Data sampleData, MappingHelper sampleMapping) {
+
+        MappingHelper helper = new MappingHelper();
+        Map<String, SingleMapping> existingMapping = MappingHelper.getMapping(sampleMapping);
+
+        for (Map.Entry<String, Object> entry : sampleData.getEntrySet()) {
+            Object val = entry.getValue();
+            SingleMapping s1 = existingMapping == null ? null : existingMapping.get(entry.getKey());
+            Type type = s1==null?TypeUtil.detectType(val):s1.getConverter().getResultType();
+            SingleMapping s = new DescriptiveSingleMapping(false, entry.getKey(), entry.getKey(), type.getConverter(), val, helper);
+            helper.addIdMap(s);
+        }
+        return helper;
     }
 
 //    private static Object[] props = {"mimeType", InputAttributes.class};

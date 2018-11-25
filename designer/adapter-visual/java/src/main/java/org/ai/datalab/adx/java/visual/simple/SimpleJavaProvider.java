@@ -29,13 +29,13 @@ public class SimpleJavaProvider extends VisualNodeProvider {
     @Override
     public VisualNodeValidator createProviderPanel(ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
 
-        return new SimpleJavaConnectorPanel(getGenerator(type, sampleInput,inputMapping), type, sampleInput);
+        return new SimpleJavaConnectorPanel(getGenerator(type, sampleInput,inputMapping), type, sampleInput,inputMapping);
     }
 
     @Override
     public VisualNodeValidator createEditPanel(DescriptiveExecutionUnit unit, Data sampleInput,MappingHelper inputMapping) {
         SimpleJavaCodeGenerator gen = (SimpleJavaCodeGenerator) ((JavaExecutorProvider) unit.getExecutorProvider()).getCodeGenerator();
-        return new SimpleJavaConnectorPanel(gen, unit.getProvidingType(), sampleInput);
+        return new SimpleJavaConnectorPanel(gen, unit.getProvidingType(), sampleInput,inputMapping);
     }
 
     @Override

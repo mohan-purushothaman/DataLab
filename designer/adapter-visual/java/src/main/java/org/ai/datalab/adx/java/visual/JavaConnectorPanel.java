@@ -56,11 +56,13 @@ public class JavaConnectorPanel extends VisualNodeValidator {
     private final JavaCodeGenerator codeGenerator;
     private final String className;
     private final JTextComponent codePane;
+    private final MappingHelper sampleMapping;
 
-    public JavaConnectorPanel(JavaCodeGenerator generator, ExecutorType type, Data sampleInput) {
+    public JavaConnectorPanel(JavaCodeGenerator generator, ExecutorType type, Data sampleInput,MappingHelper inputMapping) {
         this.type = type;
         this.sampleInput = sampleInput;
         this.codeGenerator = generator;
+        this.sampleMapping=inputMapping;
         this.className = JavaUtil.getFileName(codeGenerator.getClazzName());
         initComponents();
         codePane = JavaVisualUtil.getLatestEditor();
@@ -196,7 +198,7 @@ public class JavaConnectorPanel extends VisualNodeValidator {
             Class<Executor> clazz = JavaUtil.createClass(codeGenerator.getClazzName(), codePane.getText(), codeGenerator.getLibList()); // need to pass text editor content for line matching
             Executor e = clazz.newInstance();
             Data sampleOutput = getSampleData(e);
-            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : getDummyMapping(sampleOutput));
+            JavaExecutorProvider javaExecutorProvider = new JavaExecutorProvider(type, codeGenerator, sampleOutput == null ? null : JavaVisualUtil.getOutputMapping(sampleOutput,sampleMapping));
 
             return new JavaExecutionUnit("java " + type.name().toLowerCase(), javaExecutorProvider, sampleInput);
         } catch (CompilationException e) {
@@ -237,7 +239,6 @@ public class JavaConnectorPanel extends VisualNodeValidator {
     // End of variables declaration//GEN-END:variables
 
     private Data getSampleData(Executor e) throws Exception {
-
         switch (type) {
             case READER:
                 return ((Reader) e).readData(null);
@@ -247,16 +248,7 @@ public class JavaConnectorPanel extends VisualNodeValidator {
         return null;
     }
 
-    public static MappingHelper getDummyMapping(Data data) {
-        MappingHelper helper = new MappingHelper();
-        for (Map.Entry<String, Object> entry : data.getEntrySet()) {
-            Object val = entry.getValue();
-            Type type = TypeUtil.detectType(val);
-            SingleMapping s = new DescriptiveSingleMapping(false, entry.getKey(), entry.getKey(), type.getConverter(), val, helper);
-            helper.addIdMap(s);
-        }
-        return helper;
-    }
+   
 
     private ListModel<URL> getLibModel() {
         try {
