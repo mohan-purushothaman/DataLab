@@ -81,9 +81,11 @@ public class JavaVisualUtil {
 
             p.createGuardedReader(null, null);
 
+            populateDocument(newDoc, generator);
+            
             JPanel jp = new JPanel(new BorderLayout());
             jp.add(newDoc.createEditor(editor), BorderLayout.CENTER);
-            populateDocument(newDoc, generator);
+            
 
             return jp;
         } catch (Exception ex) {

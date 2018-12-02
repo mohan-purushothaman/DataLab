@@ -41,6 +41,29 @@
             <artifactId>beansbinding</artifactId>
             <version>1.2.1</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-java-guards</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        
+         <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-java-editor</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-lib2</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-java-editor-lib</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
     <name>java</name>
 </project>

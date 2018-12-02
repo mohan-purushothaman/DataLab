@@ -411,7 +411,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 }
             }
 
-            currentNode = (DescriptiveExecutionUnit) node.getParent();
+            currentNode = (DescriptiveExecutionUnit) currentNode.getParent();
         }
         MappingHelper mappingHelper = new MappingHelper();
 

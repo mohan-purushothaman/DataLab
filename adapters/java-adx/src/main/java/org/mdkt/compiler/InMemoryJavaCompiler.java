@@ -3,6 +3,7 @@ package org.mdkt.compiler;
 import java.util.*;
 
 import javax.tools.*;
+import org.netbeans.api.java.source.ClasspathInfo;
 
 /**
  * Compile Java sources in-memory
@@ -20,7 +21,14 @@ public class InMemoryJavaCompiler {
 	}
 
 	private InMemoryJavaCompiler() {
-		this.javac = ToolProvider.getSystemJavaCompiler();
+                ClassLoader orig = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader(ClasspathInfo.class.getClassLoader());
+                    this.javac = ToolProvider.getSystemJavaCompiler();
+                } finally {
+                    Thread.currentThread().setContextClassLoader(orig);
+                }
+                
 		this.classLoader = new DynamicClassLoader(ClassLoader.getSystemClassLoader());
 	}
 
