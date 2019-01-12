@@ -7,6 +7,7 @@ package org.ai.datalab.visual;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import javax.swing.JComponent;
 import org.ai.datalab.core.Data;
 import org.netbeans.api.visual.widget.Scene;
@@ -16,6 +17,7 @@ import org.ai.datalab.visual.impl.RunFrame;
 import org.ai.datalab.visual.impl.theme.FlowChartTheme;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -26,9 +28,9 @@ public class DataLabVisualUtil {
     public static void visualize(DataJob job) throws Exception {
         startVisualize(job).get();
     }
-    
+
     public static Future<?> startVisualize(DataJob job) throws Exception {
-        DataLabListenerGraph l = new DataLabListenerGraph(job, new FlowChartTheme(), "Test Threme ");
+        DataLabListenerGraph l = new DataLabListenerGraph(job, new FlowChartTheme(), "Test Theme ");
         
         JComponent view = l.getView();
         if (view == null) {
@@ -66,9 +68,9 @@ public class DataLabVisualUtil {
             //Exceptions.printStackTrace(Exceptions.attachSeverity(e, Level.INFO));
         }
     }
+
     
-    
-     public static Sheet.Set getDataSheet(final Data data, String displayName, String tabName) {
+    public static Sheet.Set getDataSheet(final Data data, String displayName, String tabName) {
         if (data != null) {
             Sheet.Set set = Sheet.createPropertiesSet();
 

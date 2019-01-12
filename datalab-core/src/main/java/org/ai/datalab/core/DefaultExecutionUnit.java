@@ -5,9 +5,12 @@
  */
 package org.ai.datalab.core;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import org.ai.datalab.core.resource.ResourcePool;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.ai.datalab.core.builder.ConditionExecutionUnit;
@@ -25,19 +28,20 @@ import org.ai.datalab.core.misc.ThreadUnit;
 public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUnit {
 
     private ExecutorProvider provider;
-    private ExecutionUnit parent;
+    private final Set<ExecutionUnit> parent = new LinkedHashSet<>();
 
-    private final List<DefaultExecutionUnit> childUnits;
+    private final Set<DefaultExecutionUnit> childUnits = new LinkedHashSet<>();
 
-    private DataLabQueue inputQueue;
+    private final DataLabQueue inputQueue;
     private ExecutorService executorPool;
     private String description;
 
     protected DefaultExecutionUnit(String description, ExecutorProvider provider, ExecutionUnit parent, DataLabQueue inputQueue) {
         this.provider = provider;
-        this.parent = parent;
+        if (parent != null) {
+            addParent(parent);
+        }
         this.description = description;
-        this.childUnits = new LinkedList<>();
         this.inputQueue = inputQueue;
         setThreadCount(1); //ADD THREAD PROPERTY INTO executor unit
     }
@@ -54,6 +58,10 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
         }
     }
 
+    public void addChild(DefaultExecutionUnit unit) {
+        addUnit(unit);
+    }
+
     protected void addUnit(DefaultExecutionUnit unit) {
         childUnits.add(unit);
     }
@@ -66,22 +74,30 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
     }
 
     @Override
-    public ExecutionUnit getParent() {
-        return parent;
+    public List<ExecutionUnit> getParent() {
+        return new ArrayList<>(parent);
+    }
+
+    public boolean isRootNode() {
+        return parent.isEmpty();
+    }
+
+    @Override
+    public ExecutionUnit getFirstParent() {
+        return parent.iterator().hasNext() ? parent.iterator().next() : null;
     }
 
     public void setProvider(ExecutorProvider provider) {
         this.provider = provider;
     }
 
-    public void setParent(ExecutionUnit parent) {
-        this.parent = parent;
+    public final void addParent(ExecutionUnit parent) {
+        this.parent.add(parent);
     }
 
-    public void setInputQueue(DataLabQueue inputQueue) {
-        this.inputQueue = inputQueue;
-    }
-
+//    public void setInputQueue(DataLabQueue inputQueue) {
+//        this.inputQueue = inputQueue;
+//    }
     public void setDescription(String description) {
         this.description = description;
     }
@@ -91,17 +107,13 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
     }
 
     @Override
-    public ExecutionUnit getChildAt(int index) {
-        return childUnits.get(index);
-    }
-
-    @Override
     public int getChildCount() {
         return childUnits.size();
     }
 
+    @Override
     public List<DefaultExecutionUnit> getChilds() {
-        return childUnits;
+        return new ArrayList<>(childUnits);
     }
 
     @Override
@@ -131,7 +143,7 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
                 }
         }
 
-        setProperty(Property.THREAD_COUNT, threadCount,null,!provider.isMultiThreadingSupported());
+        setProperty(Property.THREAD_COUNT, threadCount, null, !provider.isMultiThreadingSupported());
         return this;
     }
 //
@@ -148,8 +160,8 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
 
     void scheduleExecution(DataLabJobListener listener, List<ExecutorService> executingServices) {
         int threadCount = getThreadCount();
-        if(!provider.isMultiThreadingSupported()){
-            threadCount=1;
+        if (!provider.isMultiThreadingSupported()) {
+            threadCount = 1;
         }
         executorPool = Executors.newFixedThreadPool(threadCount);
         executingServices.add(executorPool);
@@ -176,9 +188,6 @@ public class DefaultExecutionUnit extends PropertyHandler implements ExecutionUn
     public String toString() {
         return getDescription();
     }
-    
-    
-    
 
     private ResourcePool getResourcePool() {
         String id = provider.getResourceID();

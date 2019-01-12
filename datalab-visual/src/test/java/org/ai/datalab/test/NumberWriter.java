@@ -22,7 +22,7 @@ import org.ai.datalab.core.executor.Writer;
  */
 public class NumberWriter implements Writer {
 
-    private final Set<Long> iSet = new HashSet<Long>();
+    private final Set<Long> iSet = new HashSet<>();
 
     @Override
     public void init(ExecutionConfig config) {

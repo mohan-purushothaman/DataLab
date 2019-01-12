@@ -5,6 +5,8 @@
  */
 package org.ai.datalab.core.builder;
 
+import java.util.List;
+import org.ai.datalab.core.DefaultExecutionUnit;
 import org.ai.datalab.core.ExecutorProvider;
 import org.ai.datalab.core.executor.ExecutorType;
 
@@ -18,11 +20,14 @@ public interface ExecutionUnit {
 
     public ConditionExecutionUnit addCondition(String description,ExecutorProvider provider);
 
-    public ExecutionUnit getParent();
-
-    public ExecutionUnit getChildAt(int index);
+    public List<ExecutionUnit> getParent();
+    
+    public ExecutionUnit getFirstParent();
+    
 
     public int getChildCount();
+    
+    public List<DefaultExecutionUnit> getChilds();
     
     public ExecutorProvider getExecutorProvider();
     

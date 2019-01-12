@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -57,14 +56,13 @@ import org.ai.datalab.core.Data;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.adx.misc.MappingHelper;
 import org.ai.datalab.core.adx.misc.SingleMapping;
-import org.ai.datalab.core.adx.misc.ValueConverter;
 import org.ai.datalab.core.builder.ConditionExecutionUnit;
 import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Configuration;
-import org.ai.datalab.core.misc.FixedData;
 import org.ai.datalab.core.misc.PropertyHandler;
 import org.ai.datalab.designer.core.ConnectorWizardIteratorInterface;
+import org.ai.datalab.designer.graph.action.PopupConnectAction;
 import org.ai.datalab.visual.DataLabTheme;
 import org.ai.datalab.visual.GraphUtil;
 import org.ai.datalab.visual.impl.widget.DescriptiveExecutionUnit;
@@ -74,12 +72,19 @@ import org.ai.datalab.visual.impl.FlowEdge;
 import org.ai.datalab.designer.misc.UndoableDeleteEdit;
 import org.ai.datalab.designer.misc.UndoableMoveStrategy;
 import org.ai.datalab.visual.DataLabVisualUtil;
+import org.ai.datalab.visual.impl.widget.misc.test.VisualTest;
+import org.netbeans.api.visual.action.ConnectDecorator;
+import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.ConnectorState;
+import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.anchor.AnchorShape;
+import org.netbeans.modules.visual.action.ConnectAction;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, FlowEdge> implements Editable{
+public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, FlowEdge> implements Editable {
 
     private final LayerWidget backgroundLayer = new LayerWidget(this);
     private final LayerWidget mainLayer = new LayerWidget(this);
@@ -140,11 +145,11 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
     public void setModified() {
         edit();
     }
-    
-    public void edit(){
+
+    public void edit() {
         editable.edit();
+        DataLabVisualUtil.validateScene(this);
     }
-    
 
     public UndoRedo getUndoRedo() {
         return manager;
@@ -175,8 +180,8 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         ConnectionWidget edgeWidget = (ConnectionWidget) findWidget(edge);
         edgeWidget.setSourceAnchor(sourceAnchor);
         DescriptiveExecutionUnit edgeTarget = getEdgeTarget(edge);
-        if(edgeTarget!=null){
-            edgeTarget.setParent(sourceNode);
+        if (edgeTarget != null) {
+            edgeTarget.addParent(sourceNode);
         }
     }
 
@@ -199,7 +204,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         widget.setPreferredLocation(new Point(x, y));
         //visualNode.prepareWidget(this, widget);
         if (parent != null) {
-            executionUnit.setParent(parent);
+            executionUnit.addParent(parent);
             FlowEdge edge = new FlowEdge(flowCondition, parent.getFinalOutputData());
             addEdge(edge);
             setEdgeSource(edge, parent);
@@ -251,10 +256,12 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                     popup.add(falsemenu);
 
                 }
-                popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Delete", localLocation, createDeleteAction(node, localLocation)));
-                // TODO  enable only after full redesign, enabled :)
+
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Edit", localLocation, createEditAction(node, localLocation)));
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Properties", localLocation, SystemAction.get(PropertiesAction.class)));
+                popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Link Output To", localLocation, createConnectionAction(w)));
+                popup.add(new JMenuItem());
+                popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Delete", localLocation, createDeleteAction(node, localLocation)));
 
                 return popup;
             }
@@ -264,6 +271,16 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
         w.getActions().addAction(createObjectHoverAction());
         w.getActions().addAction(createSelectAction());
         w.getActions().addAction(moveAction);
+
+    }
+
+    private ActionListener createConnectionAction(Widget w) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PopupConnectAction popupConnectAction = new PopupConnectAction(connectionLayer,w);
+            }
+        };
     }
 
     private void addActions() {
@@ -290,6 +307,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 DataLabGraphDesigner.this.layoutScene();
             }
         }));
+
     }
 
     private ActionListener createAddReaderAction(final Point localLocation) {
@@ -379,7 +397,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                DescriptiveExecutionUnit parent = (DescriptiveExecutionUnit) node.getParent();
+                DescriptiveExecutionUnit parent = (DescriptiveExecutionUnit) node.getFirstParent();
 
                 DescriptiveExecutionUnit visualNode = Lookup.getDefault().lookup(ConnectorWizardIteratorInterface.class).getVisualNode(node.getProvidingType(), getFullOutputMapping(parent), node);
                 if (visualNode != null) {
@@ -411,7 +429,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
                 }
             }
 
-            currentNode = (DescriptiveExecutionUnit) currentNode.getParent();
+            currentNode = (DescriptiveExecutionUnit) currentNode.getFirstParent();
         }
         MappingHelper mappingHelper = new MappingHelper();
 

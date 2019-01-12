@@ -50,8 +50,7 @@ public class ResourceValidatorUtil {
                 resourceSet.add(resourceID);
             }
 
-            for (int i = 0; i < unit.getChildCount(); i++) {
-                ExecutionUnit e = unit.getChildAt(i);
+           for (ExecutionUnit e:  unit.getChilds()) {
                 addResources(e, resourceSet);
             }
         }
@@ -85,8 +84,7 @@ public class ResourceValidatorUtil {
                 }
             }
 
-            for (int i = 0; i < unit.getChildCount(); i++) {
-                ExecutionUnit e = unit.getChildAt(i);
+            for (ExecutionUnit e:  unit.getChilds()) {
                 remap(e, remap);
             }
         }

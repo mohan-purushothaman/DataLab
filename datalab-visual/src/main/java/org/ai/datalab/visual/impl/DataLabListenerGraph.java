@@ -85,7 +85,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
     private final InputOutput io;
 
     private final ScheduledExecutorService schduledSwingDrawer;
-    
+
     private final DelayedSwingUpdater swingUpdater;
 
     static {
@@ -127,6 +127,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         addListeners();
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(createObjectHoverAction());
+
         getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         handle = ProgressHandleFactory.createHandle(jobName, new Cancellable() {
 
@@ -141,7 +142,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         handle.start();
         handle.switchToIndeterminate();
 
-        timeWidget = new TimeWidget(this,new JProgressBar());
+        timeWidget = new TimeWidget(this, new JProgressBar());
 
         mainLayer.addChild(timeWidget);
         mainLayer.addChild(resourceWidgets);
@@ -152,7 +153,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
             sceneLayout.layoutGraph(DataLabListenerGraph.this);
         });
         schduledSwingDrawer = Executors.newSingleThreadScheduledExecutor();
-        schduledSwingDrawer.scheduleWithFixedDelay((swingUpdater=new DelayedSwingUpdater() {
+        schduledSwingDrawer.scheduleWithFixedDelay((swingUpdater = new DelayedSwingUpdater() {
             @Override
             public void processUpdates() {
                 resourceWidgets.updateResource();
@@ -180,6 +181,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         mainLayer.addChild(widget);
         widget.getActions().addAction(createObjectHoverAction());
         widget.getActions().addAction(createSelectAction());
+        widget.getActions().addAction(ActionFactory.createMoveAction());
         return widget;
     }
 
@@ -213,7 +215,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
 
         DataJobProgressWidget progressNode = createNode(currentNode, 100, 100);
 
-        if (currentNode.getParent() == null) {
+        if (currentNode.isRootNode()) {
             GraphLayoutSupport.setTreeGraphLayoutRootNode(sceneLayout, currentNode);
         }
 
@@ -229,8 +231,7 @@ public final class DataLabListenerGraph extends GraphScene<ExecutionUnit, FlowEd
         DataJobProgressWidget widget = (DataJobProgressWidget) addNode(unit);
         //widget.setNodeName(visualNode.getNodeDescription());
         widget.setPreferredLocation(new Point(x, y));
-        ExecutionUnit parentNode = unit.getParent();
-        if (parentNode != null) {
+        for (ExecutionUnit parentNode : unit.getParent()) {  //TODO correct this flow condition on input queue is wrong
             FlowEdge edge = new FlowEdge(((DefaultExecutionUnit) unit).getInputQueue().getFlowCondition());
             addEdge(edge);
             setEdgeSource(edge, parentNode);

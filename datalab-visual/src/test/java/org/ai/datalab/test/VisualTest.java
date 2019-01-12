@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ai.datalab.core.DataJob;
 import org.ai.datalab.core.ExecutorProvider;
+import org.ai.datalab.core.builder.ExecutionUnit;
 //import org.ai.datalab.core.misc.HazelcastHelper;
 import org.ai.datalab.visual.DataLabVisualUtil;
 
@@ -56,12 +57,12 @@ public class VisualTest {
 
         DataJob job = DataJob.getJob("testJob ", null);
 
-        job.setReader("Reader",ExecutorProvider.getReaderInstance(NumberReader.class))
+        ExecutionUnit p = job.setReader("Reader",ExecutorProvider.getReaderInstance(NumberReader.class))
                 .addExecutor("Processor1",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor2",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor3",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor4",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor5",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor2",ExecutorProvider.getProcessorInstance(NumberProcessor.class));
+                p.getFirstParent().addExecutor("Processor3",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor4",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor5",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
                 .addExecutor("Writer5",ExecutorProvider.getWriterInstance(NumberWriter.class));
 
         System.out.println("Starting Job " + new Date());

@@ -30,10 +30,10 @@ public class VisualTest {
 
          job.setReader("Reader",ExecutorProvider.getReaderInstance(NumberReader.class))
                 .addExecutor("Processor1",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor2",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor3",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor4",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
-                .getParent().addExecutor("Processor5",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor2",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor3",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor4",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
+                .getFirstParent().addExecutor("Processor5",ExecutorProvider.getProcessorInstance(NumberProcessor.class))
                 .addExecutor("Writer5",ExecutorProvider.getWriterInstance(NumberWriter.class));
 
         System.out.println("Starting Job " + new Date());

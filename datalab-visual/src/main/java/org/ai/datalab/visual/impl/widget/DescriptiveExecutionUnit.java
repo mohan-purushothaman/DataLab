@@ -6,7 +6,6 @@
 package org.ai.datalab.visual.impl.widget;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.ai.datalab.core.builder.ExecutionUnit;
 import org.ai.datalab.core.executor.ExecutorType;
 import org.ai.datalab.core.misc.Property;
 import org.ai.datalab.core.misc.SimpleData;
-import org.ai.datalab.core.misc.DataUtil;
 import org.ai.datalab.core.misc.FixedData;
 import org.ai.datalab.visual.DataLabVisualUtil;
 import org.netbeans.api.actions.Editable;
@@ -87,6 +85,10 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
                 if (w instanceof ExecutionUnitWidget) {
                     ((ExecutionUnitWidget) w).getLabelWidget().setLabel(suggestedDescription);
                 }
+                if (graphScene instanceof Editable) {
+                    Editable e = (Editable) graphScene;
+                    e.edit();
+                }
             }
             recreateNode(graphScene);
         }
@@ -116,8 +118,8 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
 
         Sheet.Set set = Sheet.createPropertiesSet();
         for (Property p : getProperties().keySet()) {
-            
-            set.put(new PropertySupport(p.getName(), p.getClazz(), p.getDescription(), p.getShortDesc(),true,!isReadOnly(p.getName())) {
+
+            set.put(new PropertySupport(p.getName(), p.getClazz(), p.getDescription(), p.getShortDesc(), true, !isReadOnly(p.getName())) {
                 @Override
                 public Object getValue() throws IllegalAccessException, InvocationTargetException {
                     return getProperty(p);
@@ -190,7 +192,7 @@ public abstract class DescriptiveExecutionUnit extends DefaultExecutionUnit {
     @Override
     public final void firePropertyChanged(String name, Object value) {
         if (graphScene != null && graphScene instanceof Editable) {
-            ((Editable)graphScene).edit();
+            ((Editable) graphScene).edit();
         }
     }
 
