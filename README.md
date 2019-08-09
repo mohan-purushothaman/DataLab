@@ -41,7 +41,7 @@ As part of DataLab version 1.0-alpha-2 following connectors are added.
 ## Task Designer Window
 
 Creating new DataLab file or opening existing one will show Task Designer window. 
-> **Note**:  File :arrow_right: New File :arrow_right: New DataLab File
+> **Note**:  File :arrow_right_hook:  New File :arrow_right_hook: New DataLab File
 
 ![Task Designer Window](images/design.jpg)
 
@@ -54,19 +54,39 @@ Connector wizard enables designers to add new node or edit existing nodes in bel
 
 > ### Select Connector Window
 
-This step allows designers to select connectors from available connectors for the specified type (Reader, Processor, Writer and Condition). Refer Figure 3.
+This step allows designers to select connectors from available connectors for the specified type (Reader, Processor, Writer and Condition).
+
+![Select Connector](images/select_connector.jpg)
 
 > ### Connector Details Window
 
-Details required for selected connector (from step 1) shown in this window. As a sample Figure 4 shows a SQL connector. SQL connector shows available SQL resources as drop down, query editor and substituted query. Designers can add new SQL DB connections from this wizard; clicking Add new would register
+Details required for selected connector (from step 1) shown in this window. 
+
+As a sample, below image shows a SQL connector (Processor) . SQL connector display available SQL resources as drop down, query editor and substituted query. Designers can add new SQL DB connections from this wizard; clicking Add new would register
 new DB connections. On Clicking Next, validation on the given data is performed if validation failed errors would be notified.
+
+![Connector Details](images/connector_details.jpg)
 
 > ### Output Details Window
 
 >> **Note**: Not shown for Writer and Condition since they do not produce data.
 
-From validation done in previous Connector Details Window, sample generated output data’s are shown in this window. Designers have options to convert values into various standard types (Boolean, Long, Double, String, Date, Timestamp, Object). If Designer trying to edit existing node, this window will validate whether existing output data and newly generated output data are of same name and type for compatibility. Refer Figure 5.
+From validation done in previous Connector Details Window, sample generated output data’s are shown in this window. Designers have options to convert values into various standard types (Boolean, Long, Double, String, Date, Timestamp, Object). If Designer trying to edit existing node, this window will validate whether existing output data and newly generated output data are of same name and type for compatibility.
+
+![Output Details](images/output_details.jpg)
+
 > ### Configurations Window
 
 This step enables designers to view or edit properties of this node (THREAD_COUNT, NAME …).
-On completing this step, the newly created node would be added to Task Graph, with a new Edge from corresponding parent node. Refer Figure 6.
+On completing this step, the newly created node would be added to Task Graph, with a new Edge from corresponding parent node. 
+
+![Configuration Window](images/config.jpg)
+
+***
+
+## Execution Window
+On Clicking Execute in Task Designer Window, Execution for the given task will be shown visually.
+
+![Execution Window](images/execution.jpg)
+
+***
