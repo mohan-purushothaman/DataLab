@@ -103,7 +103,7 @@ class DefaultExecutorProviderImpl implements ExecutorProvider {
             for (int i = 0; i < arg.length; i++) {
                 Object a = arg[i];
                 Class clazz = p[i];
-                if (a != null && clazz != a.getClass()) {
+                if (a != null && !clazz.isAssignableFrom(a.getClass())) {
                     return false;
                 }
             }

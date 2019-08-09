@@ -27,11 +27,46 @@ These connectors implement runtime logics related to those data systems and will
 As part of DataLab version 1.0-alpha-2 following connectors are added.
 
 
-| Data System                   | Reader        | Processor  | Writer      | Condition |
-|---|:---:|:---:|:---:|:---:|
-|Delimited Files (CSV, TSV ...) |&#9989;             |            |&#9989;           |           |
-|Excel                          | &#9989;             |            |&#9989;           |           |
-|SQL database                   | &#9989;             |&#9989;            |&#9989;           |           |
-|Web Resources                  |                     |&#9989;            |&#9989;           |           |
-|Simplified Java Connector      |                     |&#9989;            |&#9989;           |&#9989;    |
-|Advanced Java Connector        | &#9989;             |&#9989;            |&#9989;           |&#9989;    |
+| Data System                     | Reader             | Processor          | Writer             | Condition          |
+|---------------------------------|:------------------:|:------------------:|:------------------:|:------------------:|
+| Delimited Files (CSV, TSV ...)  | :heavy_check_mark: |                    | :heavy_check_mark: |                    |
+| Excel                           | :heavy_check_mark: |                    | :heavy_check_mark: |                    |
+| SQL database                    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
+| Web Resources                   |                    | :heavy_check_mark: | :heavy_check_mark: |                    |
+| Simplified Java Connector       |                    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| Advanced Java Connector         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+
+***
+
+## Task Designer Window
+
+Creating new DataLab file or opening existing one will show Task Designer window. 
+> **Note**:  File :arrow_right: New File :arrow_right: New DataLab File
+
+![Task Designer Window](images/design.jpg)
+
+Task Designer window enables designers to design the data processing jobs visually. Click on any node to add child, Delete, Edit and show Properties. Based on selected Node corresponding contextual actions would be shown. Designer toolbar have actions to Execute, Realign, Zoom In, Zoom Out. Execute action will open Execution window. Editing or adding a child will open Connector Wizard.
+
+***
+
+## Connector Wizard
+Connector wizard enables designers to add new node or edit existing nodes in below four steps. Designers can validate connector for sample data (from parent node) and DataLab will handle execution logics for runtime data.
+
+> ### Select Connector Window
+
+This step allows designers to select connectors from available connectors for the specified type (Reader, Processor, Writer and Condition). Refer Figure 3.
+
+> ### Connector Details Window
+
+Details required for selected connector (from step 1) shown in this window. As a sample Figure 4 shows a SQL connector. SQL connector shows available SQL resources as drop down, query editor and substituted query. Designers can add new SQL DB connections from this wizard; clicking Add new would register
+new DB connections. On Clicking Next, validation on the given data is performed if validation failed errors would be notified.
+
+> ### Output Details Window
+
+>> **Note**: Not shown for Writer and Condition since they do not produce data.
+
+From validation done in previous Connector Details Window, sample generated output data’s are shown in this window. Designers have options to convert values into various standard types (Boolean, Long, Double, String, Date, Timestamp, Object). If Designer trying to edit existing node, this window will validate whether existing output data and newly generated output data are of same name and type for compatibility. Refer Figure 5.
+> ### Configurations Window
+
+This step enables designers to view or edit properties of this node (THREAD_COUNT, NAME …).
+On completing this step, the newly created node would be added to Task Graph, with a new Edge from corresponding parent node. Refer Figure 6.
