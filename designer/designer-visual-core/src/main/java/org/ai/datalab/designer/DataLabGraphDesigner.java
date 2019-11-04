@@ -259,7 +259,7 @@ public class DataLabGraphDesigner extends GraphScene<DescriptiveExecutionUnit, F
 
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Edit", localLocation, createEditAction(node, localLocation)));
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Properties", localLocation, SystemAction.get(PropertiesAction.class)));
-                popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Link Output To", localLocation, createConnectionAction(w)));
+                //popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Link Output To", localLocation, createConnectionAction(w)));
                 popup.add(new JMenuItem());
                 popup.add(new WidgetMenuItem(DataLabGraphDesigner.this, "Delete", localLocation, createDeleteAction(node, localLocation)));
 

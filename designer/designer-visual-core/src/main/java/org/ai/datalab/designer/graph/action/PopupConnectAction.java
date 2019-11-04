@@ -17,64 +17,64 @@ import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.modules.visual.action.ConnectAction;
+//import org.netbeans.modules.visual.action.ConnectAction;
 
 /**
  *
  * @author Mohan Purushothaman
  */
-public class PopupConnectAction extends ConnectAction {
+public class PopupConnectAction /*extends ConnectAction*/ {
 
     public PopupConnectAction(Widget interractionLayer,Widget sourceWidget) {
-        super(new ConnectDecorator() {
-            public ConnectionWidget createConnectionWidget(Scene scene) {
-                ConnectionWidget widget = new ConnectionWidget(scene);
-                widget.setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
-                return widget;
-            }
-
-            public Anchor createSourceAnchor(Widget sourceWidget) {
-                return AnchorFactory.createCenterAnchor(sourceWidget);
-            }
-
-            public Anchor createTargetAnchor(Widget targetWidget) {
-                return AnchorFactory.createCenterAnchor(targetWidget);
-            }
-
-            public Anchor createFloatAnchor(Point location) {
-                return AnchorFactory.createFixedAnchor(location);
-            }
-        }, interractionLayer, new ConnectProvider() {
-            private GraphScene scene = (GraphScene) interractionLayer.getScene();
-
-            @Override
-            public boolean isSourceWidget(Widget sourceWidget) {
-                return true;
-            }
-
-            @Override
-            public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-                return ConnectorState.ACCEPT;
-            }
-
-            @Override
-            public boolean hasCustomTargetWidgetResolver(Scene scene) {
-                return false;
-            }
-
-            @Override
-            public Widget resolveTargetWidget(Scene scene, Point sceneLocation) {
-                return null;
-            }
-
-            @Override
-            public void createConnection(Widget sourceWidget, Widget targetWidget) {
-                DescriptiveExecutionUnit source = (DescriptiveExecutionUnit) scene.findObject(sourceWidget);
-                DescriptiveExecutionUnit target = (DescriptiveExecutionUnit) scene.findObject(targetWidget);
-                target.addParent(source);
-
-            }
-        });
+//        super(new ConnectDecorator() {
+//            public ConnectionWidget createConnectionWidget(Scene scene) {
+//                ConnectionWidget widget = new ConnectionWidget(scene);
+//                widget.setTargetAnchorShape(AnchorShape.TRIANGLE_FILLED);
+//                return widget;
+//            }
+//
+//            public Anchor createSourceAnchor(Widget sourceWidget) {
+//                return AnchorFactory.createCenterAnchor(sourceWidget);
+//            }
+//
+//            public Anchor createTargetAnchor(Widget targetWidget) {
+//                return AnchorFactory.createCenterAnchor(targetWidget);
+//            }
+//
+//            public Anchor createFloatAnchor(Point location) {
+//                return AnchorFactory.createFixedAnchor(location);
+//            }
+//        }, interractionLayer, new ConnectProvider() {
+//            private GraphScene scene = (GraphScene) interractionLayer.getScene();
+//
+//            @Override
+//            public boolean isSourceWidget(Widget sourceWidget) {
+//                return true;
+//            }
+//
+//            @Override
+//            public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
+//                return ConnectorState.ACCEPT;
+//            }
+//
+//            @Override
+//            public boolean hasCustomTargetWidgetResolver(Scene scene) {
+//                return false;
+//            }
+//
+//            @Override
+//            public Widget resolveTargetWidget(Scene scene, Point sceneLocation) {
+//                return null;
+//            }
+//
+//            @Override
+//            public void createConnection(Widget sourceWidget, Widget targetWidget) {
+//                DescriptiveExecutionUnit source = (DescriptiveExecutionUnit) scene.findObject(sourceWidget);
+//                DescriptiveExecutionUnit target = (DescriptiveExecutionUnit) scene.findObject(targetWidget);
+//                target.addParent(source);
+//
+//            }
+//        });
     }
 
 }
